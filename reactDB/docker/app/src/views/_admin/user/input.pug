@@ -1,0 +1,13 @@
+extends ../../layout
+
+block content
+  h1 ユーザー登録
+
+  form(method='post' action='/_admin/user/confirm')
+    div
+      label(for='screen-name-input') Username:
+      input(type='text' name='username' id='screen-name-input')
+    div
+      label(for='password-input') Password:
+      input(t ype='text' name='password' id='password-input')
+    button Confirm

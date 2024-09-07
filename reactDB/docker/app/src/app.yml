@@ -1,0 +1,15 @@
+runtime: nodejs
+service: ex
+vm: true
+skip_files:
+  - ^(.*/)?.*/node_module/.*$
+threadsafe: true
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 2
+  cool_down_period_sec: 60
+  cpu_utilization:
+    target_utilization: .7
+  resources:
+    cpu: .2
+    memory_gb: .15

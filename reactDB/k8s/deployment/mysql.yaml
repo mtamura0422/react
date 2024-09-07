@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mysal-pod # 名前の指定（必須）
+  namespace: ex
+spec:
+  replicas: 1 # コンテナのレプリカ数の設定
+  template:
+    metadata:
+      labels: # ラベルをKV型で設定
+        app: mysql
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: mysql
+        image: gcr.io/app-labo-02/mysql:latest
+        ports:
+          - containerPort: 3306
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+

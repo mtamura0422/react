@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  h1="Master List"
+  ul
+    each val in tables
+      li: a(href="#")=val
+
