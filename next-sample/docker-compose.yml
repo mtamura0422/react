@@ -1,0 +1,60 @@
+services:
+  frontend-service:
+    build:
+      args:
+        - NODE_VER=20.11.0
+      context: ./
+      dockerfile: ./frontend/Dockerfile
+    container_name: frontend-container
+    hostname: frontend-server
+    tty: true
+    volumes:
+      - ./frontend/application:/usr/src/application
+      - ./shell:/usr/src/shell
+    ports:
+      - "3000:3000"
+    networks:
+      - mynetwork
+  backend-service:
+    build:
+      args:
+        - GO_VERSION=1.24-rc-alpine
+      context: ./
+      dockerfile: ./backend/Dockerfile
+    container_name: backend-container
+    hostname: backend-server
+    tty: true
+    volumes:
+      - ./backend/application:/usr/src/application
+      - ./shell:/usr/src/shell
+    ports:
+      - "9000:9000"
+    environment:
+      MYSQL_DATABASE: app_recipe
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_passwd
+      MYSQL_DRIVER: mysql-server:3306
+    networks:
+      - mynetwork
+  mysql-service:
+    build:
+      args:
+        - MYSQL_VER=9.2.0
+      context: ./
+      dockerfile: ./mysql/Dockerfile
+    container_name: mysql-container
+    hostname: mysql-server
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app_recipe
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_passwd
+    volumes:
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+networks:
+  mynetwork:
+    external: true
+
+

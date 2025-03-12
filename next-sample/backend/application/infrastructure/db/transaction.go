@@ -1,0 +1,66 @@
+package db
+
+import (
+	"context"
+	"log"
+
+	"github.com/uptrace/bun"
+
+	"database/sql"
+
+	"github.com/react/next-sample/backend/pkg/transaction"
+)
+
+var _ transaction.Transaction = (*TxRepository)(nil)
+
+type txKey struct{}
+
+var TxCtxKey = txKey{}
+
+type TxRepository struct {
+	db *bun.DB
+}
+
+// GetDBConn はTxRepositoryが保持しているConnectionを返します．
+func (tr *TxRepository) GetDBConn() *bun.DB {
+	return tr.db
+}
+
+func NewTxRepository(db *bun.DB) *TxRepository {
+	return &TxRepository{db: db}
+}
+
+func (r *TxRepository) RunInTx(ctx context.Context, fn func(ctx context.Context) (interface{}, error)) (interface{}, error) {
+	log.Printf("listen: RegisterRecipe7")
+	log.Printf("listen: tuuka")
+	tx, err := r.db.BeginTx(ctx, &sql.TxOptions{})
+	if err != nil {
+		log.Printf("listen: err")
+		return nil, err
+	}
+	log.Printf("listen: RegisterRecipe8")
+	// bunの `RunInTx`をベースに途中でcontextにトランザクションオブジェクトを入れる処理を追加
+	c := context.WithValue(ctx, TxCtxKey, tx)
+
+	var done bool
+
+	defer func() {
+		if !done {
+			_ = tx.Rollback()
+		}
+	}()
+
+	v, err := fn(c)
+	if err != nil {
+		return v, err
+	}
+
+	done = true
+	return v, tx.Commit()
+}
+
+// context.Contextからトランザクションを取得する関数も忘れずに！
+func GetTx(ctx context.Context) (*bun.Tx, bool) {
+	tx, ok := ctx.Value(TxCtxKey).(*bun.Tx)
+	return tx, ok
+}

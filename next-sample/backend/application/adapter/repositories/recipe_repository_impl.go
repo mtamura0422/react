@@ -1,0 +1,93 @@
+package repositories
+
+import (
+	"context"
+
+	"github.com/react/next-sample/backend/adapter/repositories/model"
+	"github.com/react/next-sample/backend/domain/entity"
+	"github.com/react/next-sample/backend/infrastructure/db"
+	pkgErr "github.com/react/next-sample/backend/pkg/error"
+	"github.com/react/next-sample/backend/usecase"
+	"github.com/uptrace/bun"
+)
+
+var _ usecase.RecipeRepository = (*RecipeRepositoryImpl)(nil)
+
+type RecipeRepositoryImpl struct {
+	db *bun.DB
+}
+
+const LIMIT = 10
+
+func (r *RecipeRepositoryImpl) Add(ctx context.Context, eRecipe *entity.Recipe) (*entity.Recipe, *pkgErr.ApplicationError) {
+
+	var inserter *bun.InsertQuery
+	var recipe *model.Recipe
+
+	recipe = model.ToRecipeMapper(eRecipe)
+
+	// context からトランザクションオブジェクトを取得する
+	if tx, ok := db.GetTx(ctx); ok {
+		// トランザクションオブジェクトがある場合は、トランザクションで処理を行う
+		inserter = tx.NewInsert()
+	} else {
+		// トランザクションオブジェクトがない場合は通常の処理を行う
+		inserter = r.db.NewInsert()
+	}
+
+	ret, err := inserter.Model(recipe).Exec(ctx)
+	if err != nil {
+		return nil, RepositoryError(err)
+	}
+
+	lastInsertID, err := ret.LastInsertId()
+
+	recipe.Id = lastInsertID
+
+	return recipe.ToEntity(), nil
+
+}
+
+func (u *RecipeRepositoryImpl) Find(ctx context.Context, id int64) (*entity.Recipe, *pkgErr.ApplicationError) {
+
+	//tx := ctx.Value(TX_KEY).(*bun.Tx)
+	var recipe model.Recipe
+	if err := u.db.NewSelect().Model(&recipe).Relation("RecipeMaterials").Where("id = ?", id).Scan(ctx); err != nil {
+		return nil, RepositoryError(err)
+	}
+	return recipe.ToEntity(), nil
+}
+
+func (u *RecipeRepositoryImpl) GetList(ctx context.Context, page int64) ([]*entity.Recipe, *pkgErr.ApplicationError) {
+
+	var dbRecipes []model.Recipe
+
+	offset := int((page - 1) * LIMIT)
+
+	//tx := ctx.Value(TX_KEY).(*bun.Tx)
+	err := u.db.NewSelect().Model(&dbRecipes).
+		Relation("RecipeMaterials").
+		Offset(offset).
+		Order("id desc").
+		Limit(LIMIT).
+		Scan(ctx)
+
+	if err != nil {
+		return nil, RepositoryError(err)
+	}
+
+	recipeEntityes := make([]*entity.Recipe, len(dbRecipes))
+	for i, recipeRecord := range dbRecipes {
+		recipeEntityes[i] = recipeRecord.ToEntity()
+	}
+
+	return recipeEntityes, nil
+}
+
+func NewRecipeRepository(db *bun.DB) usecase.RecipeRepository {
+	return &RecipeRepositoryImpl{db: db}
+}
+
+func NewRecipeRepositoryImpl(db *bun.DB) *RecipeRepositoryImpl {
+	return &RecipeRepositoryImpl{db: db}
+}

@@ -1,0 +1,4 @@
+ARG MYSQL_VER
+FROM mysql:${MYSQL_VER}
+
+ENV TZ=Asia/Tokyo

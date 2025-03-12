@@ -1,0 +1,5 @@
+# yaml-language-server: ...
+package: openapi
+generate:
+  chi-server: true
+output: infrastructure/openapi/server.gen.go
