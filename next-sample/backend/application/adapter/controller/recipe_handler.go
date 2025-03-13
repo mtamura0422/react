@@ -16,30 +16,19 @@ func (s *Server) GetVersion(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) RegisterRecipe(w http.ResponseWriter, r *http.Request) {
 
-	log.Printf("listen: RegisterRecipe")
 	var recipe openapi.Recipe
 	if err := json.NewDecoder(r.Body).Decode(&recipe); err != nil {
 		s.handleError(w, r, err)
 		return
 	}
-	log.Printf("listen: RegisterRecipe2")
-	log.Printf("%v", &recipe)
 
-	uRecipe, err := s.recipeService.CreateRecipeTx(r.Context(), &recipe)
-
-	res, ok := uRecipe.(*openapi.Recipe)
-	if ok {
-		fmt.Println(recipe)
-	}
-
-	log.Printf("あああああああああ")
-	//uRecipe, err := s.recipeUsecase.AddRecipe(r.Context(), ToDTO(&recipe))
+	uRecipe, err := s.recipeUsecase.AddRecipe(r.Context(), ToDTO(&recipe))
 	if err != nil {
 		s.handleError(w, r, err)
 		return
 	}
 
-	s.HandleOK(w, res)
+	s.HandleOK(w, ToResponse(uRecipe))
 
 }
 

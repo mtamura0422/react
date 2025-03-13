@@ -15,7 +15,9 @@ WORKDIR /usr/src/application
 # RUN go mod download
 
 RUN go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
-RUN go install  github.com/amacneil/dbmate@latest
+RUN go install  github.com/amacneil/dbmate@latest \
+github.com/google/wire/cmd/wire@latest
+
 
 RUN apk add make
 

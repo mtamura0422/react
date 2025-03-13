@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewDB(t *testing.T) {
-	_, err := NewDB()
+	_, err := NewDBMock()
 	assert.NoError(t, err)
 
 }

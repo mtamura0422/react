@@ -15,7 +15,7 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httplog"
 	nethttp_middmiddleware "github.com/oapi-codegen/nethttp-middleware"
-	my_controller "github.com/react/next-sample/backend/adapter/controller"
+	"github.com/react/next-sample/backend/di"
 	"github.com/react/next-sample/backend/infrastructure/openapi"
 )
 
@@ -31,7 +31,8 @@ func InitRouter() {
 	logger := httplog.NewLogger("server", httplog.Options{
 		JSON: true,
 	})
-	server := my_controller.NewServer()
+	//server := my_controller.NewServer()
+	server := di.InitializeServer()
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{

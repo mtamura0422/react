@@ -4,31 +4,34 @@ import (
 	"context"
 	"log"
 
+	"github.com/react/next-sample/backend/domain/repositories"
 	pkgErr "github.com/react/next-sample/backend/pkg/error"
+	"github.com/react/next-sample/backend/usecase/dto"
+	"github.com/react/next-sample/backend/usecase/port"
 )
 
-var _ RecipeMaterialUsecase = (*RecipeMaterialUsecaseImpl)(nil)
+var _ port.RecipeMaterialUsecase = (*RecipeMaterialUsecaseImpl)(nil)
 
 type RecipeMaterialUsecaseImpl struct {
-	recipeMaterialRepository RecipeMaterialRepository
+	recipeMaterialRepository repositories.RecipeMaterialRepository
 }
 
 func (u *RecipeMaterialUsecaseImpl) FindRecipeMaterial(
 	ctx context.Context,
 	id int64,
-) (*RecipeMaterial, *pkgErr.ApplicationError) {
+) (*dto.RecipeMaterial, *pkgErr.ApplicationError) {
 	log.Printf("tuuka material2")
-	entity, err := u.recipeMaterialRepository.Find(ctx, id)
+	entity, err := u.recipeMaterialRepository.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	log.Printf("tuuka material3")
-	return ToRecipeMaterialMapper(entity), nil
+	return dto.ToRecipeMaterialMapper(entity), nil
 }
 
 func NewRecipeMaterialUsecase(
-	recipeMaterialRepository RecipeMaterialRepository,
-) RecipeMaterialUsecase {
+	recipeMaterialRepository repositories.RecipeMaterialRepository,
+) port.RecipeMaterialUsecase {
 	return &RecipeMaterialUsecaseImpl{
 		recipeMaterialRepository: recipeMaterialRepository,
 	}

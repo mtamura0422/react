@@ -1,4 +1,4 @@
-package usecase
+package dto
 
 import (
 	"time"
@@ -18,10 +18,19 @@ type Recipe struct {
 
 // DTO モデルを Entity に変換
 func (r *Recipe) ToEntity() *entity.Recipe {
+
+	recipeMaterials := make([]entity.RecipeMaterial, len(r.RecipeMaterials))
+
+	for i, rm := range r.RecipeMaterials {
+		recipeMaterials[i] = entity.RecipeMaterial{
+			Name: rm.Name,
+		}
+	}
 	return &entity.Recipe{
-		Id:      r.Id,
-		Title:   r.Title,
-		Content: r.Content,
+		Id:              r.Id,
+		Title:           r.Title,
+		Content:         r.Content,
+		RecipeMaterials: recipeMaterials,
 	}
 }
 

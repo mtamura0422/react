@@ -1,4 +1,4 @@
-package usecase
+package dto
 
 import (
 	"time"
@@ -13,15 +13,6 @@ type RecipeMaterial struct {
 	Name      string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-}
-
-// ORM モデルを Entity に変換
-func (rm *RecipeMaterial) ToEntity() *entity.RecipeMaterial {
-	return &entity.RecipeMaterial{
-		Id:       rm.Id,
-		RecipeId: rm.RecipeId,
-		Name:     rm.Name,
-	}
 }
 
 // Entity を ORM モデルに変換

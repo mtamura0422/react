@@ -5,13 +5,13 @@ import (
 
 	"github.com/react/next-sample/backend/adapter/repositories/model"
 	"github.com/react/next-sample/backend/domain/entity"
+	"github.com/react/next-sample/backend/domain/repositories"
 	"github.com/react/next-sample/backend/infrastructure/db"
 	pkgErr "github.com/react/next-sample/backend/pkg/error"
-	"github.com/react/next-sample/backend/usecase"
 	"github.com/uptrace/bun"
 )
 
-var _ usecase.RecipeRepository = (*RecipeRepositoryImpl)(nil)
+var _ repositories.RecipeRepository = (*RecipeRepositoryImpl)(nil)
 
 type RecipeRepositoryImpl struct {
 	db *bun.DB
@@ -19,7 +19,7 @@ type RecipeRepositoryImpl struct {
 
 const LIMIT = 10
 
-func (r *RecipeRepositoryImpl) Add(ctx context.Context, eRecipe *entity.Recipe) (*entity.Recipe, *pkgErr.ApplicationError) {
+func (r *RecipeRepositoryImpl) Create(ctx context.Context, eRecipe *entity.Recipe) (*entity.Recipe, *pkgErr.ApplicationError) {
 
 	var inserter *bun.InsertQuery
 	var recipe *model.Recipe
@@ -48,7 +48,7 @@ func (r *RecipeRepositoryImpl) Add(ctx context.Context, eRecipe *entity.Recipe) 
 
 }
 
-func (u *RecipeRepositoryImpl) Find(ctx context.Context, id int64) (*entity.Recipe, *pkgErr.ApplicationError) {
+func (u *RecipeRepositoryImpl) Get(ctx context.Context, id int64) (*entity.Recipe, *pkgErr.ApplicationError) {
 
 	//tx := ctx.Value(TX_KEY).(*bun.Tx)
 	var recipe model.Recipe
@@ -58,7 +58,7 @@ func (u *RecipeRepositoryImpl) Find(ctx context.Context, id int64) (*entity.Reci
 	return recipe.ToEntity(), nil
 }
 
-func (u *RecipeRepositoryImpl) GetList(ctx context.Context, page int64) ([]*entity.Recipe, *pkgErr.ApplicationError) {
+func (u *RecipeRepositoryImpl) List(ctx context.Context, page int64) ([]*entity.Recipe, *pkgErr.ApplicationError) {
 
 	var dbRecipes []model.Recipe
 
@@ -84,10 +84,6 @@ func (u *RecipeRepositoryImpl) GetList(ctx context.Context, page int64) ([]*enti
 	return recipeEntityes, nil
 }
 
-func NewRecipeRepository(db *bun.DB) usecase.RecipeRepository {
-	return &RecipeRepositoryImpl{db: db}
-}
-
-func NewRecipeRepositoryImpl(db *bun.DB) *RecipeRepositoryImpl {
+func NewRecipeRepository(db *bun.DB) repositories.RecipeRepository {
 	return &RecipeRepositoryImpl{db: db}
 }

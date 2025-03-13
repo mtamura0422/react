@@ -6,10 +6,6 @@ import (
 	pkgErr "github.com/react/next-sample/backend/pkg/error"
 )
 
-type TxKey string
-
-const TX_KEY TxKey = "TRANSACTION_KEY"
-
 func RepositoryError(err error) *pkgErr.ApplicationError {
 	switch err {
 	case sql.ErrNoRows:

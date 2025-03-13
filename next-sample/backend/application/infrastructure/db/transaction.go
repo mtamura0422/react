@@ -8,6 +8,7 @@ import (
 
 	"database/sql"
 
+	pkgErr "github.com/react/next-sample/backend/pkg/error"
 	"github.com/react/next-sample/backend/pkg/transaction"
 )
 
@@ -30,13 +31,13 @@ func NewTxRepository(db *bun.DB) *TxRepository {
 	return &TxRepository{db: db}
 }
 
-func (r *TxRepository) RunInTx(ctx context.Context, fn func(ctx context.Context) (interface{}, error)) (interface{}, error) {
+func (r *TxRepository) RunInTx(ctx context.Context, fn func(ctx context.Context) (interface{}, error)) (interface{}, *pkgErr.ApplicationError) {
 	log.Printf("listen: RegisterRecipe7")
 	log.Printf("listen: tuuka")
 	tx, err := r.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		log.Printf("listen: err")
-		return nil, err
+		return nil, TransactionError(err)
 	}
 	log.Printf("listen: RegisterRecipe8")
 	// bunの `RunInTx`をベースに途中でcontextにトランザクションオブジェクトを入れる処理を追加
@@ -52,15 +53,26 @@ func (r *TxRepository) RunInTx(ctx context.Context, fn func(ctx context.Context)
 
 	v, err := fn(c)
 	if err != nil {
-		return v, err
+		return v, TransactionError(err)
 	}
 
 	done = true
-	return v, tx.Commit()
+	return v, TransactionError(tx.Commit())
 }
 
 // context.Contextからトランザクションを取得する関数も忘れずに！
 func GetTx(ctx context.Context) (*bun.Tx, bool) {
 	tx, ok := ctx.Value(TxCtxKey).(*bun.Tx)
 	return tx, ok
+}
+
+func TransactionError(err error) *pkgErr.ApplicationError {
+	switch err {
+	case nil:
+		return nil
+	case sql.ErrNoRows:
+		return pkgErr.NewApplicationError(err.Error(), pkgErr.LevelWarn, pkgErr.CodeNotFound)
+	default:
+		return pkgErr.NewApplicationError(err.Error(), pkgErr.LevelError, pkgErr.CodeInternalServerError)
+	}
 }

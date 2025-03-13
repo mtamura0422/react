@@ -9,6 +9,7 @@ require (
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/httplog v0.3.2
 	github.com/go-sql-driver/mysql v1.9.0
+	github.com/google/wire v0.6.0
 	github.com/oapi-codegen/nethttp-middleware v1.0.2
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/stretchr/testify v1.9.0

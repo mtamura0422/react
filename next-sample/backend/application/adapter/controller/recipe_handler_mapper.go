@@ -2,20 +2,30 @@ package controller
 
 import (
 	"github.com/react/next-sample/backend/infrastructure/openapi"
-	"github.com/react/next-sample/backend/usecase"
+	"github.com/react/next-sample/backend/usecase/dto"
 )
 
-func ToDTO(req *openapi.Recipe) *usecase.Recipe {
-	return &usecase.Recipe{
-		Id:        req.Id,
-		Title:     req.Title,
-		Content:   req.Content,
-		CreatedAt: req.CreatedAt,
-		UpdatedAt: req.UpdatedAt,
+func ToDTO(req *openapi.Recipe) *dto.Recipe {
+
+	recipeMaterials := make([]dto.RecipeMaterial, len(req.Materials))
+
+	for i, rm := range req.Materials {
+		recipeMaterials[i] = dto.RecipeMaterial{
+			Name: rm,
+		}
+	}
+
+	return &dto.Recipe{
+		Id:              req.Id,
+		Title:           req.Title,
+		Content:         req.Content,
+		CreatedAt:       req.CreatedAt,
+		UpdatedAt:       req.UpdatedAt,
+		RecipeMaterials: recipeMaterials,
 	}
 }
 
-func ToResponse(u *usecase.Recipe) *openapi.Recipe {
+func ToResponse(u *dto.Recipe) *openapi.Recipe {
 
 	materials := make([]string, len(u.RecipeMaterials))
 

@@ -2,23 +2,22 @@ package repositories
 
 import (
 	"context"
-	"log"
 
 	"github.com/react/next-sample/backend/adapter/repositories/model"
 	"github.com/react/next-sample/backend/domain/entity"
+	"github.com/react/next-sample/backend/domain/repositories"
 	"github.com/react/next-sample/backend/infrastructure/db"
 	pkgErr "github.com/react/next-sample/backend/pkg/error"
-	"github.com/react/next-sample/backend/usecase"
 	"github.com/uptrace/bun"
 )
 
-var _ usecase.RecipeMaterialRepository = (*RecipeaMaterialRepositoryImpl)(nil)
+var _ repositories.RecipeMaterialRepository = (*RecipeMaterialRepositoryImpl)(nil)
 
-type RecipeaMaterialRepositoryImpl struct {
+type RecipeMaterialRepositoryImpl struct {
 	db *bun.DB
 }
 
-func (r *RecipeaMaterialRepositoryImpl) Add(ctx context.Context, eRecipeMaterial *entity.RecipeMaterial) (*entity.RecipeMaterial, *pkgErr.ApplicationError) {
+func (r *RecipeMaterialRepositoryImpl) Create(ctx context.Context, eRecipeMaterial *entity.RecipeMaterial) (*entity.RecipeMaterial, *pkgErr.ApplicationError) {
 
 	var inserter *bun.InsertQuery
 	var recipeMaterial *model.RecipeMaterial
@@ -42,11 +41,7 @@ func (r *RecipeaMaterialRepositoryImpl) Add(ctx context.Context, eRecipeMaterial
 
 }
 
-func (u *RecipeaMaterialRepositoryImpl) Find(ctx context.Context, id int64) (*entity.RecipeMaterial, *pkgErr.ApplicationError) {
-	log.Printf("tuuka1")
-
-	//tx := ctx.Value(TX_KEY).(*bun.Tx)
-	log.Printf("tuuka2")
+func (u *RecipeMaterialRepositoryImpl) Get(ctx context.Context, id int64) (*entity.RecipeMaterial, *pkgErr.ApplicationError) {
 	var recipeMaterial model.RecipeMaterial
 	if err := u.db.NewSelect().Model(&recipeMaterial).Where("id = ?", id).Scan(ctx); err != nil {
 		return nil, RepositoryError(err)
@@ -54,10 +49,6 @@ func (u *RecipeaMaterialRepositoryImpl) Find(ctx context.Context, id int64) (*en
 	return recipeMaterial.ToEntity(), nil
 }
 
-func NewRecipeMaterialRepository(db *bun.DB) usecase.RecipeMaterialRepository {
-	return &RecipeaMaterialRepositoryImpl{db: db}
-}
-
-func NewRecipeaMaterialRepositoryImpl(db *bun.DB) *RecipeaMaterialRepositoryImpl {
-	return &RecipeaMaterialRepositoryImpl{db: db}
+func NewRecipeMaterialRepository(db *bun.DB) repositories.RecipeMaterialRepository {
+	return &RecipeMaterialRepositoryImpl{db: db}
 }
