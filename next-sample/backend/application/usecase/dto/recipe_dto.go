@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"log"
+	"mime/multipart"
 	"time"
 
 	"github.com/react/next-sample/backend/domain/entity"
@@ -11,10 +13,21 @@ type Recipe struct {
 	Id              int64
 	Title           string
 	Content         string
+	Filename        string
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 	RecipeMaterials []RecipeMaterial
+	RecipeImage     RecipeImage
 }
+
+type RecipeImage struct {
+	File       multipart.File
+	FileHeader *multipart.FileHeader
+}
+
+const IMAGE_DMAIN = "http://localhost:9000"
+const IMAGE_PATH = "/images/"
+const IMAGE_DEFAULT_FILW = "sample.png"
 
 // DTO モデルを Entity に変換
 func (r *Recipe) ToEntity() *entity.Recipe {
@@ -26,11 +39,18 @@ func (r *Recipe) ToEntity() *entity.Recipe {
 			Name: rm.Name,
 		}
 	}
+
+	RecipeImage := entity.RecipeImage{
+		File:       r.RecipeImage.File,
+		FileHeader: r.RecipeImage.FileHeader,
+	}
+
 	return &entity.Recipe{
 		Id:              r.Id,
 		Title:           r.Title,
 		Content:         r.Content,
 		RecipeMaterials: recipeMaterials,
+		RecipeImage:     RecipeImage,
 	}
 }
 
@@ -43,10 +63,20 @@ func ToRecipeMapper(e *entity.Recipe) *Recipe {
 		recipeMaterial[i] = *ToRecipeMaterialMapper(&rm)
 	}
 
+	filename := IMAGE_DMAIN + IMAGE_PATH
+
+	if e.Filename != "" {
+		filename += e.Filename
+	} else {
+		filename += IMAGE_DEFAULT_FILW
+	}
+
+	log.Printf("filename = %s", filename)
 	return &Recipe{
 		Id:              e.Id,
 		Title:           e.Title,
 		Content:         e.Content,
+		Filename:        filename,
 		CreatedAt:       e.CreatedAt,
 		UpdatedAt:       e.UpdatedAt,
 		RecipeMaterials: recipeMaterial,

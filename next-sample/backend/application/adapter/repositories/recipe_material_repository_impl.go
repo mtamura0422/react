@@ -7,7 +7,6 @@ import (
 	"github.com/react/next-sample/backend/domain/entity"
 	"github.com/react/next-sample/backend/domain/repositories"
 	"github.com/react/next-sample/backend/infrastructure/db"
-	pkgErr "github.com/react/next-sample/backend/pkg/error"
 	"github.com/uptrace/bun"
 )
 
@@ -17,7 +16,7 @@ type RecipeMaterialRepositoryImpl struct {
 	db *bun.DB
 }
 
-func (r *RecipeMaterialRepositoryImpl) Create(ctx context.Context, eRecipeMaterial *entity.RecipeMaterial) (*entity.RecipeMaterial, *pkgErr.ApplicationError) {
+func (r *RecipeMaterialRepositoryImpl) Create(ctx context.Context, eRecipeMaterial *entity.RecipeMaterial) (*entity.RecipeMaterial, error) {
 
 	var inserter *bun.InsertQuery
 	var recipeMaterial *model.RecipeMaterial
@@ -41,7 +40,7 @@ func (r *RecipeMaterialRepositoryImpl) Create(ctx context.Context, eRecipeMateri
 
 }
 
-func (u *RecipeMaterialRepositoryImpl) Get(ctx context.Context, id int64) (*entity.RecipeMaterial, *pkgErr.ApplicationError) {
+func (u *RecipeMaterialRepositoryImpl) Get(ctx context.Context, id int64) (*entity.RecipeMaterial, error) {
 	var recipeMaterial model.RecipeMaterial
 	if err := u.db.NewSelect().Model(&recipeMaterial).Where("id = ?", id).Scan(ctx); err != nil {
 		return nil, RepositoryError(err)

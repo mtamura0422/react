@@ -31,7 +31,7 @@ func NewTxRepository(db *bun.DB) *TxRepository {
 	return &TxRepository{db: db}
 }
 
-func (r *TxRepository) RunInTx(ctx context.Context, fn func(ctx context.Context) (interface{}, error)) (interface{}, *pkgErr.ApplicationError) {
+func (r *TxRepository) RunInTx(ctx context.Context, fn func(ctx context.Context) (interface{}, error)) (interface{}, error) {
 	log.Printf("listen: RegisterRecipe7")
 	log.Printf("listen: tuuka")
 	tx, err := r.db.BeginTx(ctx, &sql.TxOptions{})
@@ -66,7 +66,7 @@ func GetTx(ctx context.Context) (*bun.Tx, bool) {
 	return tx, ok
 }
 
-func TransactionError(err error) *pkgErr.ApplicationError {
+func TransactionError(err error) error {
 	switch err {
 	case nil:
 		return nil

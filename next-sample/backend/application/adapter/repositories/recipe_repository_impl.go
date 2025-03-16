@@ -2,12 +2,12 @@ package repositories
 
 import (
 	"context"
+	"log"
 
 	"github.com/react/next-sample/backend/adapter/repositories/model"
 	"github.com/react/next-sample/backend/domain/entity"
 	"github.com/react/next-sample/backend/domain/repositories"
 	"github.com/react/next-sample/backend/infrastructure/db"
-	pkgErr "github.com/react/next-sample/backend/pkg/error"
 	"github.com/uptrace/bun"
 )
 
@@ -19,7 +19,7 @@ type RecipeRepositoryImpl struct {
 
 const LIMIT = 10
 
-func (r *RecipeRepositoryImpl) Create(ctx context.Context, eRecipe *entity.Recipe) (*entity.Recipe, *pkgErr.ApplicationError) {
+func (r *RecipeRepositoryImpl) Create(ctx context.Context, eRecipe *entity.Recipe) (*entity.Recipe, error) {
 
 	var inserter *bun.InsertQuery
 	var recipe *model.Recipe
@@ -43,14 +43,13 @@ func (r *RecipeRepositoryImpl) Create(ctx context.Context, eRecipe *entity.Recip
 	lastInsertID, err := ret.LastInsertId()
 
 	recipe.Id = lastInsertID
-
+	log.Printf("recipe Create tuuka1")
 	return recipe.ToEntity(), nil
 
 }
 
-func (u *RecipeRepositoryImpl) Get(ctx context.Context, id int64) (*entity.Recipe, *pkgErr.ApplicationError) {
+func (u *RecipeRepositoryImpl) Get(ctx context.Context, id int64) (*entity.Recipe, error) {
 
-	//tx := ctx.Value(TX_KEY).(*bun.Tx)
 	var recipe model.Recipe
 	if err := u.db.NewSelect().Model(&recipe).Relation("RecipeMaterials").Where("id = ?", id).Scan(ctx); err != nil {
 		return nil, RepositoryError(err)
@@ -58,13 +57,12 @@ func (u *RecipeRepositoryImpl) Get(ctx context.Context, id int64) (*entity.Recip
 	return recipe.ToEntity(), nil
 }
 
-func (u *RecipeRepositoryImpl) List(ctx context.Context, page int64) ([]*entity.Recipe, *pkgErr.ApplicationError) {
+func (u *RecipeRepositoryImpl) List(ctx context.Context, page int64) ([]*entity.Recipe, error) {
 
 	var dbRecipes []model.Recipe
 
 	offset := int((page - 1) * LIMIT)
 
-	//tx := ctx.Value(TX_KEY).(*bun.Tx)
 	err := u.db.NewSelect().Model(&dbRecipes).
 		Relation("RecipeMaterials").
 		Offset(offset).

@@ -17,6 +17,7 @@ const (
 	CodeNotFound
 	CodeDuplicate
 	CodeInternalServerError
+	CodeValidatorError
 )
 
 type ApplicationError struct {

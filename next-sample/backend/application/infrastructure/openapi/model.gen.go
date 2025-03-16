@@ -5,6 +5,8 @@ package openapi
 
 import (
 	"time"
+
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // Recipe defines model for Recipe.
@@ -14,7 +16,8 @@ type Recipe struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	// Id レシピID
-	Id int64 `json:"id"`
+	Id    int64  `json:"id"`
+	Image string `json:"image"`
 
 	// Materials 最大10個の材料を15文字で指定できます
 	Materials []string `json:"materials"`
@@ -43,8 +46,20 @@ type GetRecipeListParams struct {
 	Page *int `form:"page,omitempty" json:"page,omitempty"`
 }
 
-// RegisterRecipeJSONBody defines parameters for RegisterRecipe.
-type RegisterRecipeJSONBody = map[string]interface{}
+// RegisterRecipeMultipartBody defines parameters for RegisterRecipe.
+type RegisterRecipeMultipartBody struct {
+	// Content 作り方を500文字まで設定できます
+	Content string `json:"content"`
 
-// RegisterRecipeJSONRequestBody defines body for RegisterRecipe for application/json ContentType.
-type RegisterRecipeJSONRequestBody = RegisterRecipeJSONBody
+	// File image file to be uploaded
+	File *openapi_types.File `json:"file,omitempty"`
+
+	// Materials 最大10個の材料を15文字で指定できます
+	Materials []string `json:"materials"`
+
+	// Title レシピタイトルを20文字で指定できます
+	Title string `json:"title"`
+}
+
+// RegisterRecipeMultipartRequestBody defines body for RegisterRecipe for multipart/form-data ContentType.
+type RegisterRecipeMultipartRequestBody RegisterRecipeMultipartBody

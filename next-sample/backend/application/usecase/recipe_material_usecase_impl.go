@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/react/next-sample/backend/domain/repositories"
-	pkgErr "github.com/react/next-sample/backend/pkg/error"
 	"github.com/react/next-sample/backend/usecase/dto"
 	"github.com/react/next-sample/backend/usecase/port"
 )
@@ -19,7 +18,7 @@ type RecipeMaterialUsecaseImpl struct {
 func (u *RecipeMaterialUsecaseImpl) FindRecipeMaterial(
 	ctx context.Context,
 	id int64,
-) (*dto.RecipeMaterial, *pkgErr.ApplicationError) {
+) (*dto.RecipeMaterial, error) {
 	log.Printf("tuuka material2")
 	entity, err := u.recipeMaterialRepository.Get(ctx, id)
 	if err != nil {

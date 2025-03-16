@@ -3,11 +3,11 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/react/next-sample/backend/domain/entity"
 	"github.com/react/next-sample/backend/domain/repositories"
 	sPort "github.com/react/next-sample/backend/domain/service/port"
-	pkgErr "github.com/react/next-sample/backend/pkg/error"
 	"github.com/react/next-sample/backend/usecase/dto"
 	"github.com/react/next-sample/backend/usecase/port"
 )
@@ -32,7 +32,7 @@ func NewRecipeUsecase(
 func (u *RecipeUsecaseImpl) AddRecipe(
 	ctx context.Context,
 	recipe *dto.Recipe,
-) (*dto.Recipe, *pkgErr.ApplicationError) {
+) (*dto.Recipe, error) {
 
 	eRecipe, err := u.recipeService.CreateRecipeTx(ctx, recipe.ToEntity())
 
@@ -52,7 +52,7 @@ func (u *RecipeUsecaseImpl) AddRecipe(
 func (u *RecipeUsecaseImpl) FindRecipe(
 	ctx context.Context,
 	id int64,
-) (*dto.Recipe, *pkgErr.ApplicationError) {
+) (*dto.Recipe, error) {
 	entity, err := u.recipeRepository.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -63,17 +63,18 @@ func (u *RecipeUsecaseImpl) FindRecipe(
 func (u *RecipeUsecaseImpl) GetRecipeList(
 	ctx context.Context,
 	page int64,
-) ([]*dto.Recipe, *pkgErr.ApplicationError) {
-
+) ([]*dto.Recipe, error) {
+	log.Printf("GetRecipeList tuuka0")
 	entities, err := u.recipeRepository.List(ctx, page)
 	if err != nil {
 		return nil, err
 	}
-
+	log.Printf("GetRecipeList tuuka1")
 	dtoRecipes := make([]*dto.Recipe, len(entities))
 	for i, recipeEntity := range entities {
+		log.Printf("GetRecipeList tuuka2")
 		dtoRecipes[i] = dto.ToRecipeMapper(recipeEntity)
 	}
-
+	log.Printf("GetRecipeList tuuka3")
 	return dtoRecipes, nil
 }

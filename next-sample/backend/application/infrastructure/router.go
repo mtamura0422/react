@@ -9,17 +9,25 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strings"
 
+	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httplog"
-	nethttp_middmiddleware "github.com/oapi-codegen/nethttp-middleware"
+	nethttp_middleware "github.com/oapi-codegen/nethttp-middleware"
 	"github.com/react/next-sample/backend/di"
 	"github.com/react/next-sample/backend/infrastructure/openapi"
 )
 
 func InitRouter() {
+
+	openapi3filter.RegisterBodyDecoder("multipart/form-data", openapi3filter.FileBodyDecoder)
+	openapi3filter.RegisterBodyDecoder("image/jpeg", openapi3filter.FileBodyDecoder)
+	openapi3filter.RegisterBodyDecoder("image/png", openapi3filter.FileBodyDecoder)
+
 	swagger, err := openapi.GetSwagger() // APIスキーマ定義を取得
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading swagger spec\n: %s", err)
@@ -50,18 +58,49 @@ func InitRouter() {
 	router.Use(middleware.Recoverer)
 
 	router.Use(middlewareStaticImages)
+
+	router.Use(middlewareFormdataValidator)
+
 	router.Use(middleware.Heartbeat("/healthz"))
-	router.Use(nethttp_middmiddleware.OapiRequestValidator(swagger)) // validationを設定
+	router.Use(middleware.AllowContentType("application/json", "multipart/form-data"))
+
+	router.Use(oapiRequestValidatorWithExclusion(swagger))
+	//router.Use(nethttp_middleware.OapiRequestValidator(swagger)) // validationを設定
 
 	openapi.HandlerFromMux(server, router) // chiのrouterと実装したserverを紐付け
-	http.ListenAndServe(":9000", router)
+	if err := http.ListenAndServe(":9000", router); err != nil {
+		fmt.Fprintf(os.Stderr, "Server failed: %s\n", err)
+		os.Exit(1)
+	}
 
 }
 
 // 画像配信用
+var middlewareFormdataValidator = func(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// `multipart/form-data` の場合は `OapiRequestValidator` の前にリクエストを解析する
+		if strings.Contains(r.Header.Get("Content-Type"), "multipart/form-data") {
+			err := r.ParseMultipartForm(10 << 20) // 10MB
+			if err != nil {
+				http.Error(w, "リクエストの解析に失敗しました", http.StatusBadRequest)
+				return
+			}
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 var middlewareStaticImages = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ret := regexp.MustCompile("^/images/*")
+		/*
+			len := r.ContentLength
+			body := make([]byte, len) // Content-Length と同じサイズの byte 配列を用意
+			r.Body.Read(body)         // byte 配列にリクエストボディを読み込む
+
+			log.Printf("body ====")
+			log.Println(w, string(body))
+		*/
+		ret := regexp.MustCompile("^/images/.*")
 
 		if ret.MatchString(r.URL.Path) {
 			fileServer := http.FileServer(http.Dir("images/"))
@@ -71,4 +110,38 @@ var middlewareStaticImages = func(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+func oapiRequestValidatorWithExclusion(swagger *openapi3.T) func(http.Handler) http.Handler {
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+			// `multipart/form-data` の場合は `OapiRequestValidator` の前にリクエストを解析する
+			if strings.Contains(r.Header.Get("Content-Type"), "multipart/form-data") {
+				err := r.ParseMultipartForm(10 << 20) // 10MB
+				if err != nil {
+					http.Error(w, "リクエストの解析に失敗しました", http.StatusBadRequest)
+					return
+				}
+				next.ServeHTTP(w, r)
+			} else {
+				validator := nethttp_middleware.OapiRequestValidator(swagger)
+				validator(next).ServeHTTP(w, r)
+			}
+		})
+	}
+
+	/*
+		validator := nethttp_middleware.OapiRequestValidator(swagger)
+		return func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path == "/recipe/register" {
+					next.ServeHTTP(w, r)
+					return
+				}
+				validator(next).ServeHTTP(w, r)
+			})
+		}
+	*/
 }

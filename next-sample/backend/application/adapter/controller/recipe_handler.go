@@ -1,12 +1,9 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/react/next-sample/backend/infrastructure/openapi"
 )
 
 func (s *Server) GetVersion(w http.ResponseWriter, r *http.Request) {
@@ -15,14 +12,57 @@ func (s *Server) GetVersion(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) RegisterRecipe(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Aaaaaa")
+	/*
 
-	var recipe openapi.Recipe
-	if err := json.NewDecoder(r.Body).Decode(&recipe); err != nil {
-		s.handleError(w, r, err)
+
+		log.Printf("aaaaa%v", materialsStr)
+
+
+			var materials []dto.RecipeMaterial
+			err = json.Unmarshal([]byte(materialsStr), &materials)
+			if err != nil {
+				http.Error(w, "材料情報のパースに失敗しました", http.StatusBadRequest)
+				return
+			}
+	*/
+
+	/*
+			// "file" フィールドから取得
+			file, handler, err := r.FormFile("file")
+			if err != nil {
+				http.Error(w, "ファイルがアップロードされていません", http.StatusBadRequest)
+				return
+			}
+
+		defer file.Close()
+
+		log.Printf("listen: %v", handler.Filename)
+	*/
+
+	/*
+		var recipe openapi.Recipe
+		if err := json.NewDecoder(r.Body).Decode(&recipe); err != nil {
+			s.handleError(w, r, err)
+			return
+		}
+	*/
+	/*
+		var recipe = openapi.Recipe{
+			Title:     r.FormValue("title"),
+			Content:   r.FormValue("content"),
+			Materials: r.MultipartForm.Value["materials[]"],
+		}
+	*/
+	dtoRecipe, e := ReqToDTO(r)
+	if e != nil {
+		s.handleError(w, r, e)
 		return
 	}
 
-	uRecipe, err := s.recipeUsecase.AddRecipe(r.Context(), ToDTO(&recipe))
+	uRecipe, err := s.recipeUsecase.AddRecipe(r.Context(), dtoRecipe)
+
+	//uRecipe, err := s.recipeUsecase.AddRecipe(r.Context(), ToDTO(&recipe))
 	if err != nil {
 		s.handleError(w, r, err)
 		return

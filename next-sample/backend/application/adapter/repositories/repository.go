@@ -6,7 +6,7 @@ import (
 	pkgErr "github.com/react/next-sample/backend/pkg/error"
 )
 
-func RepositoryError(err error) *pkgErr.ApplicationError {
+func RepositoryError(err error) error {
 	switch err {
 	case sql.ErrNoRows:
 		return pkgErr.NewApplicationError(err.Error(), pkgErr.LevelWarn, pkgErr.CodeNotFound)

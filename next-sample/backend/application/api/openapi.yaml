@@ -81,14 +81,73 @@ paths:
         "201":
           description: OK
       requestBody:
+        required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
-              items:
-                  $ref: "#/components/schemas/Recipe"
+              properties:
+                title:
+                  type: string
+                  description: レシピタイトルを20文字で指定できます
+                  example: レシピ名
+                materials:
+                  type: array
+                  description: 最大10個の材料を15文字で指定できます
+                  items:
+                    type: string
+                  example:
+                    - 白菜
+                    - トマト
+                    - きゅうり
+                content:
+                  type: string
+                  description: 作り方を500文字まで設定できます
+                  example: 1.白菜を食べやすい大きさに切る\n2.白菜を茹でる
+                file:
+                  type: string
+                  format: binary
+                  description: image file to be uploaded
+              required:
+                - title
+                - materials
+                - content
+                #    schema:
+                #      $ref: "#/components/schemas/UploadRecipe"
+            encoding:
+              file:
+                contentType: image/png, image/jpeg
+              
 components:
   schemas:
+    UploadRecipe:
+      type: object
+      properties:
+        title:
+          type: string
+          description: レシピタイトルを20文字で指定できます
+          example: レシピ名
+        materials:
+          type: array
+          description: 最大10個の材料を15文字で指定できます
+          items:
+            type: string
+          example:
+            - 白菜
+            - トマト
+            - きゅうり
+        content:
+          type: string
+          description: 作り方を500文字まで設定できます
+          example: 1.白菜を食べやすい大きさに切る\n2.白菜を茹でる
+        file:
+          type: string
+          format: binary
+          description: image file to be uploaded
+      required:
+        - title
+        - materials
+        - content
     Recipe:
       type: object
       properties:
@@ -97,6 +156,9 @@ components:
           format: int64
           description: レシピID
           example: レシピID
+        image:
+          type: string
+          example: レシピ画像パス
         title:
           type: string
           description: レシピタイトルを20文字で指定できます
@@ -125,8 +187,10 @@ components:
         - title
         - materials
         - content
+        - image
         - created_at
         - updated_at
+
     RecipeList:
       type: object
       properties:

@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	sPort "github.com/react/next-sample/backend/domain/service/port"
+	pkgErr "github.com/react/next-sample/backend/pkg/error"
 	"github.com/react/next-sample/backend/usecase/port"
 	"github.com/uptrace/bun"
 )
@@ -36,6 +38,7 @@ func NewServer(
 /*
 func NewServer() *Server {
 
+		// DI使わないバージョン
 		d, _ := db.NewDB()
 		tx := db.NewTxRepository(d)
 
@@ -60,11 +63,25 @@ func (s *Server) HandleOK(w http.ResponseWriter, obj interface{}) {
 
 func (s *Server) handleError(w http.ResponseWriter, r *http.Request, err error) {
 	s.setResponseHeaders(w)
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
+	//	w.WriteHeader(http.StatusInternalServerError)
+	//	w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
 
 	log.Printf("%v", r)
 	log.Printf("%v", err)
+
+	// 独自エラーならステータスコード表示
+	if appErr, ok := err.(*pkgErr.ApplicationError); ok {
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": appErr.Error(),
+			"code":  strconv.Itoa(int(appErr.Code())),
+		})
+
+	} else {
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": err.Error(),
+			"code":  "pkg.CodeInternalServerError",
+		})
+	}
 
 }
 
