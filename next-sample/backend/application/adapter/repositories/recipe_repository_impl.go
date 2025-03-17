@@ -57,21 +57,21 @@ func (u *RecipeRepositoryImpl) Get(ctx context.Context, id int64) (*entity.Recip
 	return recipe.ToEntity(), nil
 }
 
-func (u *RecipeRepositoryImpl) List(ctx context.Context, page int64) ([]*entity.Recipe, error) {
+func (u *RecipeRepositoryImpl) List(ctx context.Context, page int64) ([]*entity.Recipe, int, error) {
 
 	var dbRecipes []model.Recipe
 
 	offset := int((page - 1) * LIMIT)
 
-	err := u.db.NewSelect().Model(&dbRecipes).
+	count, err := u.db.NewSelect().Model(&dbRecipes).
 		Relation("RecipeMaterials").
 		Offset(offset).
 		Order("id desc").
 		Limit(LIMIT).
-		Scan(ctx)
+		ScanAndCount(ctx)
 
 	if err != nil {
-		return nil, RepositoryError(err)
+		return nil, 0, RepositoryError(err)
 	}
 
 	recipeEntityes := make([]*entity.Recipe, len(dbRecipes))
@@ -79,25 +79,25 @@ func (u *RecipeRepositoryImpl) List(ctx context.Context, page int64) ([]*entity.
 		recipeEntityes[i] = recipeRecord.ToEntity()
 	}
 
-	return recipeEntityes, nil
+	return recipeEntityes, count, nil
 }
 
-func (u *RecipeRepositoryImpl) Search(ctx context.Context, word string, page int64) ([]*entity.Recipe, error) {
+func (u *RecipeRepositoryImpl) Search(ctx context.Context, word string, page int64) ([]*entity.Recipe, int, error) {
 
 	var dbRecipes []model.Recipe
 
 	offset := int((page - 1) * LIMIT)
 
-	err := u.db.NewSelect().Model(&dbRecipes).
+	count, err := u.db.NewSelect().Model(&dbRecipes).
 		Relation("RecipeMaterials").
 		Where("(title LIKE ?) or (content LIKE ?)", "%"+word+"%", "%"+word+"%").
 		Offset(offset).
 		Order("id desc").
 		Limit(LIMIT).
-		Scan(ctx)
+		ScanAndCount(ctx)
 
 	if err != nil {
-		return nil, RepositoryError(err)
+		return nil, 0, RepositoryError(err)
 	}
 
 	recipeEntityes := make([]*entity.Recipe, len(dbRecipes))
@@ -105,7 +105,7 @@ func (u *RecipeRepositoryImpl) Search(ctx context.Context, word string, page int
 		recipeEntityes[i] = recipeRecord.ToEntity()
 	}
 
-	return recipeEntityes, nil
+	return recipeEntityes, count, nil
 }
 
 func NewRecipeRepository(db *bun.DB) repositories.RecipeRepository {

@@ -59,6 +59,8 @@ func (s *Server) HandleOK(w http.ResponseWriter, obj interface{}) {
 	s.setResponseHeaders(w)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(obj)
+
+	log.Printf("%v", obj)
 }
 
 func (s *Server) handleError(w http.ResponseWriter, r *http.Request, err error) {

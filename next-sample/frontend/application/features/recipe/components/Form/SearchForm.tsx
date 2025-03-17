@@ -50,11 +50,13 @@ const SearchForm = (props: TextFormProps) => {
 
   useEffect(() => {
 
-    const params = new URLSearchParams();
-    params.set('page', '1');
-    params.set('q', searchWord);
-    
-    replace(`${pathname}?${params.toString()}`);
+    if (searchWord != "") {
+      const params = new URLSearchParams();
+      params.set('page', '1');
+      params.set('q', searchWord);
+      
+      replace(`${pathname}?${params.toString()}`);
+    }
 
   /*
     if (searchWord.trim() !== '') {
@@ -93,7 +95,7 @@ const SearchForm = (props: TextFormProps) => {
   //const [searchWords, setSearchWords] = useRecoilState(searchWordState);
 
   const { placeholder, width, min, max } = props;
-
+console.log("searchWord = " + searchWord)
   return (
     <div className={`flex ${width} relative`}>
       {/* relativeを追加 */}
@@ -102,7 +104,7 @@ const SearchForm = (props: TextFormProps) => {
         type={props.type}
         min={props.type === 'number' ? min : undefined}
         max={props.type === 'number' ? max : undefined}
-    //    value={searchWords.join(' ')}
+        value={searchWord}
         className="peer h-full w-full rounded-lg bg-transparent py-1.5 pl-8 caret-pink-500 outline outline-1 outline-gray-300 transition-all duration-100 focus:outline-2 focus:outline-pink-500"
         onChange={(e) => {
           const trimmedValue = e.target.value.trimStart(); // 入力値の先頭の空白を除去

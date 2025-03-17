@@ -13,8 +13,6 @@ import {
 
 const Footer = () => {
 
-  const [searchWord, updateSearchWord] = useAtom(searchWordState);
- 
 
   return (
     
@@ -22,11 +20,11 @@ const Footer = () => {
       <Link href="/">
        <FooterParts pathname="/" text="ホーム" icon={faHouse} />
       </Link>
-      <Link href="/search">
+      <Link href="/search" onClick={() => updateSearchWord("")}>
         <FooterParts pathname="/search" text="検索" icon={faMagnifyingGlass} />
       </Link>
   
-      <Link href={'/regist'} onClick={() => updateSearchWord("")}>
+      <Link href={'/regist'} >
         <FooterParts pathname="/regist" text="レシピ投稿" icon={faPen} />
       </Link>
 

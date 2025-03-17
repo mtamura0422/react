@@ -1,5 +1,6 @@
 
 import * as Recipe from "@/features/recipe/components/Index"
+import Pagination from '@/components/elements/pager/Pager';
 
 type Props = {
   q: string;
@@ -16,14 +17,17 @@ const getData = async ({
   const query = new URLSearchParams(params);
     
   var res = await fetch("http://backend-service:9000/recipe/search?" + query)
+
   return res.json();
 
 };
 
 const Result = async ({ q, page }: Props) => {
-  console.log("tuuuuka result");
-  const recipes: Recipe.RecipeData[] = await getData({ q, page });
 
+  const data = await getData({ q, page });
+  const recipes: Recipe.RecipeData[] = data.list
+  
+  
   return (
 <div>
   <div className="mt-4">
@@ -35,6 +39,13 @@ const Result = async ({ q, page }: Props) => {
         <Recipe.List key={rp.id} id={rp.id} title={rp.title} content={rp.content} image={rp.image} materials={rp.materials} />
       ))}
     </div>
+    <Pagination
+      page={Number(page)} 
+      total_count={data.total_count} 
+      per_page={data.per_page} 
+      page_path="/search" 
+      q={q}
+    />
   </div>
 
 </div>
