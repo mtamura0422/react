@@ -2,8 +2,14 @@
 
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as Recipe from "@/features/recipe/components/Index"
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation'
+import { useRecoilState } from 'recoil';
+import {  useAtom } from "jotai";
+
+import {
+  searchWordState,
+} from '@/state/search';
+
 
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -22,8 +28,8 @@ type TextFormProps = {
   maxLength?: number;
   required?: boolean;
   disabled?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
+
 
 
 
@@ -34,9 +40,8 @@ export const searchWordState = atom<string[]>({
 });
 */
 const SearchForm = (props: TextFormProps) => {
-
-  const [searchWord, updateSearchWord] = useInputValue('');
-  const [resultRecipes, setResultRecipes] = useState<Recipe.RecipeData[]>([]); // 型を明示的に指定
+;
+  const [searchWord, updateSearchWord] = useAtom(searchWordState);
 
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -99,7 +104,11 @@ const SearchForm = (props: TextFormProps) => {
         max={props.type === 'number' ? max : undefined}
     //    value={searchWords.join(' ')}
         className="peer h-full w-full rounded-lg bg-transparent py-1.5 pl-8 caret-pink-500 outline outline-1 outline-gray-300 transition-all duration-100 focus:outline-2 focus:outline-pink-500"
-        onChange={updateSearchWord}
+        onChange={(e) => {
+          const trimmedValue = e.target.value.trimStart(); // 入力値の先頭の空白を除去
+          updateSearchWord(trimmedValue); // 検索ワードをstateにセット
+
+        }}
         maxLength={props.maxLength}
         required={props.required}
         disabled={props.disabled}
@@ -108,9 +117,7 @@ const SearchForm = (props: TextFormProps) => {
         icon={faMagnifyingGlass}
         className="absolute left-2 top-1/2 -translate-y-1/2 text-lg text-gray-400 transition-all duration-100 peer-focus:text-base peer-focus:text-pink-500"
       />
-       {resultRecipes.map((rp) => (
-          <Recipe.List key={rp.id}  id={rp.id} title={rp.title} content={rp.content} image={rp.image} materials={rp.materials} />
-        ))}
+
     </div>
 
    
