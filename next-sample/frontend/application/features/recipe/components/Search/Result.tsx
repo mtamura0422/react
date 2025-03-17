@@ -28,6 +28,9 @@ const Result = async ({ q, page }: Props) => {
 <div>
   <div className="mt-4">
     <div className="flex max-h-[400px] w-full flex-col overflow-y-scroll">
+      {(recipes.length <= 0)? (
+        <div className="text-center">該当するレシピが見つかりませんでした</div>
+      ) : null}
       {recipes.map((rp) => (
         <Recipe.List key={rp.id} id={rp.id} title={rp.title} content={rp.content} image={rp.image} materials={rp.materials} />
       ))}

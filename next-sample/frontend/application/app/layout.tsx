@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Header from '@/components/layouts/header/Header';
 import Footer from '@/components/layouts/footer/Footer';
-import { RecoilRoot } from 'recoil';
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,7 +37,9 @@ export default function RootLayout({
         <div className="mx-auto flex h-[100svh]  flex-col bg-white outline outline-2 outline-[#f9f2e8] lg:w-[473px] ">
           <Header />
           <div className="flex-1 overflow-y-auto overscroll-none">
+    
               {children}
+
           </div>
           <Footer />
         </div>

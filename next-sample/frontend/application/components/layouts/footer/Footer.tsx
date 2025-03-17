@@ -1,13 +1,19 @@
-
+"use client"; 
 
 import { faHouse, faMagnifyingGlass, faPen } from "@fortawesome/free-solid-svg-icons";
 import Link from 'next/link';
 import { FooterParts } from './FooterParts'
 import React from 'react';
+import {  useAtom } from "jotai";
+
+import {
+  searchWordState,
+} from '@/state/search';
 
 
 const Footer = () => {
 
+  const [searchWord, updateSearchWord] = useAtom(searchWordState);
  
 
   return (
@@ -20,7 +26,7 @@ const Footer = () => {
         <FooterParts pathname="/search" text="検索" icon={faMagnifyingGlass} />
       </Link>
   
-      <Link href={'/regist'}>
+      <Link href={'/regist'} onClick={() => updateSearchWord("")}>
         <FooterParts pathname="/regist" text="レシピ投稿" icon={faPen} />
       </Link>
 
