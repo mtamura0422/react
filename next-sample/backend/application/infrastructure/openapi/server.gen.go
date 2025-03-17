@@ -22,6 +22,9 @@ type ServerInterface interface {
 	// 新規レシピ登録
 	// (POST /recipe/register)
 	RegisterRecipe(w http.ResponseWriter, r *http.Request)
+	// レシピ検索
+	// (GET /recipe/search)
+	GetRecipeSearch(w http.ResponseWriter, r *http.Request, params GetRecipeSearchParams)
 	// レシピ取得
 	// (GET /recipe/{recipeId})
 	GetRecipe(w http.ResponseWriter, r *http.Request, recipeId int64)
@@ -46,6 +49,12 @@ func (_ Unimplemented) GetRecipeList(w http.ResponseWriter, r *http.Request, par
 // 新規レシピ登録
 // (POST /recipe/register)
 func (_ Unimplemented) RegisterRecipe(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// レシピ検索
+// (GET /recipe/search)
+func (_ Unimplemented) GetRecipeSearch(w http.ResponseWriter, r *http.Request, params GetRecipeSearchParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -110,6 +119,48 @@ func (siw *ServerInterfaceWrapper) RegisterRecipe(w http.ResponseWriter, r *http
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.RegisterRecipe(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetRecipeSearch operation middleware
+func (siw *ServerInterfaceWrapper) GetRecipeSearch(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetRecipeSearchParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", r.URL.Query(), &params.Page)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page", Err: err})
+		return
+	}
+
+	// ------------- Required query parameter "q" -------------
+
+	if paramValue := r.URL.Query().Get("q"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "q"})
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "q", r.URL.Query(), &params.Q)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "q", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetRecipeSearch(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -265,6 +316,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/recipe/register", wrapper.RegisterRecipe)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/recipe/search", wrapper.GetRecipeSearch)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/recipe/{recipeId}", wrapper.GetRecipe)

@@ -61,5 +61,11 @@ type RegisterRecipeMultipartBody struct {
 	Title string `json:"title"`
 }
 
+// GetRecipeSearchParams defines parameters for GetRecipeSearch.
+type GetRecipeSearchParams struct {
+	Page *int   `form:"page,omitempty" json:"page,omitempty"`
+	Q    string `form:"q" json:"q"`
+}
+
 // RegisterRecipeMultipartRequestBody defines body for RegisterRecipe for multipart/form-data ContentType.
 type RegisterRecipeMultipartRequestBody RegisterRecipeMultipartBody

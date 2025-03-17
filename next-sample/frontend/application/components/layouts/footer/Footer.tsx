@@ -16,8 +16,8 @@ const Footer = () => {
       <Link href="/">
        <FooterParts pathname="/" text="ホーム" icon={faHouse} />
       </Link>
-      <Link href="/searchrecipe">
-        <FooterParts pathname="/searchrecipe" text="検索" icon={faMagnifyingGlass} />
+      <Link href="/search">
+        <FooterParts pathname="/search" text="検索" icon={faMagnifyingGlass} />
       </Link>
   
       <Link href={'/regist'}>

@@ -8,7 +8,7 @@ export type RecipeData = {
   content: string;
   image: string;
   materials: [];
-  updated_at: string;
+  updated_at?: string;
 };
 
 

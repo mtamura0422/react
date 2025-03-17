@@ -55,7 +55,7 @@ func ReqToDTO(r *http.Request) (*dto.Recipe, error) {
 	if content == "" {
 		return nil, pkgErr.NewApplicationError("作り方 は必須です", pkgErr.LevelError, pkgErr.CodeValidatorError)
 	}
-	if utf8.RuneCountInString(title) > 1 {
+	if utf8.RuneCountInString(title) > 20 {
 		return nil, pkgErr.NewApplicationError("レシピタイトル は20文字以内にしてください", pkgErr.LevelError, pkgErr.CodeValidatorError)
 	}
 	if utf8.RuneCountInString(content) > 500 {

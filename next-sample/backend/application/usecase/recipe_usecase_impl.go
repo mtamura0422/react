@@ -78,3 +78,23 @@ func (u *RecipeUsecaseImpl) GetRecipeList(
 	log.Printf("GetRecipeList tuuka3")
 	return dtoRecipes, nil
 }
+
+func (u *RecipeUsecaseImpl) SearchRecipeList(
+	ctx context.Context,
+	word string,
+	page int64,
+) ([]*dto.Recipe, error) {
+	log.Printf("GetRecipeList tuuka0")
+	entities, err := u.recipeRepository.Search(ctx, word, page)
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("GetRecipeList tuuka1")
+	dtoRecipes := make([]*dto.Recipe, len(entities))
+	for i, recipeEntity := range entities {
+		log.Printf("GetRecipeList tuuka2")
+		dtoRecipes[i] = dto.ToRecipeMapper(recipeEntity)
+	}
+	log.Printf("GetRecipeList tuuka3")
+	return dtoRecipes, nil
+}

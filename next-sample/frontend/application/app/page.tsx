@@ -24,7 +24,7 @@ export default async function Home() {
   <div className="mt-4">
     <div className="flex max-h-[400px] w-full flex-col overflow-y-scroll">
       {recipes.map((rp) => (
-        <Recipe.List key={rp.id} updated_at="" id={rp.id} title={rp.title} content={rp.content} image={rp.image} materials={rp.materials} />
+        <Recipe.List key={rp.id} id={rp.id} title={rp.title} content={rp.content} image={rp.image} materials={rp.materials} />
       ))}
     </div>
   </div>

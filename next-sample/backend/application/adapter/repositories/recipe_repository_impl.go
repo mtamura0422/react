@@ -82,6 +82,32 @@ func (u *RecipeRepositoryImpl) List(ctx context.Context, page int64) ([]*entity.
 	return recipeEntityes, nil
 }
 
+func (u *RecipeRepositoryImpl) Search(ctx context.Context, word string, page int64) ([]*entity.Recipe, error) {
+
+	var dbRecipes []model.Recipe
+
+	offset := int((page - 1) * LIMIT)
+
+	err := u.db.NewSelect().Model(&dbRecipes).
+		Relation("RecipeMaterials").
+		Where("(title LIKE ?) or (content LIKE ?)", "%"+word+"%", "%"+word+"%").
+		Offset(offset).
+		Order("id desc").
+		Limit(LIMIT).
+		Scan(ctx)
+
+	if err != nil {
+		return nil, RepositoryError(err)
+	}
+
+	recipeEntityes := make([]*entity.Recipe, len(dbRecipes))
+	for i, recipeRecord := range dbRecipes {
+		recipeEntityes[i] = recipeRecord.ToEntity()
+	}
+
+	return recipeEntityes, nil
+}
+
 func NewRecipeRepository(db *bun.DB) repositories.RecipeRepository {
 	return &RecipeRepositoryImpl{db: db}
 }

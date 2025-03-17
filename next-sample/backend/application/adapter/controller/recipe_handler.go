@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/react/next-sample/backend/infrastructure/openapi"
 )
 
 func (s *Server) GetVersion(w http.ResponseWriter, r *http.Request) {
@@ -11,8 +13,26 @@ func (s *Server) GetVersion(w http.ResponseWriter, r *http.Request) {
 	log.Printf("listen: GetVersion")
 }
 
+func (s *Server) GetRecipeSearch(w http.ResponseWriter, r *http.Request, params openapi.GetRecipeSearchParams) {
+	log.Printf("GetRecipeSearch handler tuuka1")
+	log.Printf("GetRecipeSearch handler tuuka2 %v", int64(*params.Page))
+
+	recipes, err := s.recipeUsecase.SearchRecipeList(r.Context(), params.Q, int64(*params.Page))
+	if err != nil {
+		s.handleError(w, r, err)
+		return
+	}
+	log.Printf("GetRecipeList handler tuuka3")
+	oapiRecipes := make([]*openapi.Recipe, len(recipes))
+	for i, recipe := range recipes {
+		oapiRecipes[i] = ToResponse(recipe)
+	}
+
+	s.HandleOK(w, oapiRecipes)
+}
+
 func (s *Server) RegisterRecipe(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Aaaaaa")
+
 	/*
 
 
