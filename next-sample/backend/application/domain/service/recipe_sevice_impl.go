@@ -40,7 +40,7 @@ func (s *RecipeServiceImpl) createRecipe(input *entity.Recipe) func(ctx context.
 			return nil, err
 		}
 
-		input.Filename = filename
+		input.Image = filename
 		eRecipe, err := s.rRepo.Create(ctx, input)
 		if err != nil {
 			return nil, err

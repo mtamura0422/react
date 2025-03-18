@@ -13,7 +13,7 @@ type Recipe struct {
 	Id              int64
 	Title           string
 	Content         string
-	Filename        string
+	Image           string
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 	RecipeMaterials []RecipeMaterial
@@ -65,8 +65,8 @@ func ToRecipeMapper(e *entity.Recipe) *Recipe {
 
 	filename := IMAGE_DMAIN + IMAGE_PATH
 
-	if e.Filename != "" {
-		filename += e.Filename
+	if e.Image != "" {
+		filename += e.Image
 	} else {
 		filename += IMAGE_DEFAULT_FILW
 	}
@@ -76,7 +76,7 @@ func ToRecipeMapper(e *entity.Recipe) *Recipe {
 		Id:              e.Id,
 		Title:           e.Title,
 		Content:         e.Content,
-		Filename:        filename,
+		Image:           filename,
 		CreatedAt:       e.CreatedAt,
 		UpdatedAt:       e.UpdatedAt,
 		RecipeMaterials: recipeMaterial,

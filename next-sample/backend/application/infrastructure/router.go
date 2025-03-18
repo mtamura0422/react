@@ -19,6 +19,7 @@ import (
 	"github.com/go-chi/httplog"
 	nethttp_middleware "github.com/oapi-codegen/nethttp-middleware"
 	"github.com/react/next-sample/backend/di"
+	"github.com/react/next-sample/backend/infrastructure/db"
 	"github.com/react/next-sample/backend/infrastructure/openapi"
 )
 
@@ -72,6 +73,8 @@ func InitRouter() {
 		fmt.Fprintf(os.Stderr, "Server failed: %s\n", err)
 		os.Exit(1)
 	}
+
+	db.CloseDB()
 
 }
 

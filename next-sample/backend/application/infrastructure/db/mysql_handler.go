@@ -14,6 +14,7 @@ import (
 )
 
 var DB *sql.DB
+var BunDB *bun.DB
 
 func NewDB() *bun.DB {
 
@@ -55,6 +56,9 @@ func NewDB() *bun.DB {
 	db.AddQueryHook(bundebug.NewQueryHook(
 		bundebug.WithVerbose(true),
 	))
+
+	DB = engine
+	BunDB = db
 
 	return db
 }
@@ -101,4 +105,18 @@ func NewDBMock() (*bun.DB, error) {
 	))
 
 	return db, nil
+}
+
+func CloseDB() error {
+	err := DB.Close()
+
+	if err != nil {
+		return err
+	}
+	err = BunDB.Close()
+	if err != nil {
+		return err
+	}
+	return nil
+
 }

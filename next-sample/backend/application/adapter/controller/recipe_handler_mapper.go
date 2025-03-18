@@ -113,7 +113,7 @@ func ToResponse(u *dto.Recipe) *openapi.Recipe {
 		Id:        u.Id,
 		Title:     u.Title,
 		Content:   u.Content,
-		Image:     u.Filename,
+		Image:     u.Image,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
 		Materials: materials,
