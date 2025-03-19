@@ -71,7 +71,7 @@ func NewDBMock() (*bun.DB, error) {
 		//	return nil, fmt.Errorf("error time setting: %w", err)
 	}
 	c := mysql.Config{
-		DBName:    os.Getenv("MYSQL_DATABASE"),
+		DBName:    os.Getenv("MYSQL_TEST_DATABASE"),
 		User:      os.Getenv("MYSQL_USER"),
 		Passwd:    os.Getenv("MYSQL_PASSWORD"),
 		Addr:      os.Getenv("MYSQL_DRIVER"),

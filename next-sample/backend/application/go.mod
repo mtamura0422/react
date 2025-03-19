@@ -16,6 +16,7 @@ require (
 	github.com/uptrace/bun v1.2.10
 	github.com/uptrace/bun/dialect/mysqldialect v1.2.10
 	github.com/uptrace/bun/extra/bundebug v1.2.10
+	go.uber.org/mock v0.5.0
 )
 
 require (
