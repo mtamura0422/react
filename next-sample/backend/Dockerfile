@@ -16,7 +16,8 @@ WORKDIR /usr/src/application
 
 RUN go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
 RUN go install  github.com/amacneil/dbmate@latest \
-github.com/google/wire/cmd/wire@latest
+github.com/google/wire/cmd/wire@latest \
+go.uber.org/mock/mockgen@latest
 
 
 RUN apk add make

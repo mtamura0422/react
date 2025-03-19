@@ -104,6 +104,9 @@ func NewDBMock() (*bun.DB, error) {
 		bundebug.WithVerbose(true),
 	))
 
+	DB = engine
+	BunDB = db
+
 	return db, nil
 }
 
