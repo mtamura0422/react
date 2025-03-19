@@ -15,9 +15,9 @@ WORKDIR /usr/src/application
 # RUN go mod download
 
 RUN go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
-RUN go install  github.com/amacneil/dbmate@latest \
-github.com/google/wire/cmd/wire@latest \
-go.uber.org/mock/mockgen@latest
+RUN go install  github.com/amacneil/dbmate@latest 
+RUN go install  github.com/google/wire/cmd/wire@latest 
+RUN go install  go.uber.org/mock/mockgen@latest
 
 
 RUN apk add make
@@ -26,5 +26,5 @@ RUN apk add make
 #RUN go build -o myapp
 
 # 実行可能ファイルをデフォルトのコマンドとして設定
-CMD ["/bin/sh", "-c", "go build -o myapp && while true; do sleep 1; done"]
-#CMD [ "/bin/sh", "-c", "while true; do sleep 1; done" ]
+#CMD ["/bin/sh", "-c", "go build -o myapp && while true; do sleep 1; done"]
+CMD [ "/bin/sh", "-c", "while true; do sleep 1; done" ]
