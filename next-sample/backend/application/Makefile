@@ -4,6 +4,14 @@ openapi-gen:
 	oapi-codegen -config api/model.config.yaml api/openapi.yaml
 	oapi-codegen -config api/spec.config.yaml api/openapi.yaml
 
+.PHONY: dbmate-test-p
+dbmate-test-up:
+	dbmate --url "mysql://app_user:app_passwd@mysql-server:3306/app_recipe_test" up
+
+.PHONY: dbmate-test-down
+dbmate-test-down:
+	dbmate --url "mysql://app_user:app_passwd@mysql-server:3306/app_recipe_test" down
+
 .PHONY: wire-gen
 wire-gen:
 	wire cmd/wire.go
