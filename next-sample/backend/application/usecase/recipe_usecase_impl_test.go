@@ -1,68 +1,72 @@
 package usecase
 
 import (
+	"context"
+	"reflect"
 	"testing"
 
 	"github.com/react/next-sample/backend/domain/entity"
 	repositories "github.com/react/next-sample/backend/domain/repositories/mock"
+	service "github.com/react/next-sample/backend/domain/service/port/mock"
+	"github.com/react/next-sample/backend/usecase/dto"
+	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
 
 func TestAddRecipe(t *testing.T) {
-
-	create_data := &entity.Recipe{
-		Title:   "テストタイトル",
-		Content: "テスト作り方",
-		Image:   "tedt.png",
-	}
-
-	create_material_data := &entity.RecipeMaterial{
+	// ★ モックデータの準備
+	create_material_data := &dto.RecipeMaterial{
 		RecipeId: 1,
 		Name:     "材料",
 	}
 
-	ret_data := &entity.Recipe{
+	dtoRecipeMaterial := []dto.RecipeMaterial{*create_material_data}
+
+	create_data := &dto.Recipe{
+		Title:           "テストタイトル",
+		Content:         "テスト作り方",
+		Image:           "test.png",
+		RecipeMaterials: dtoRecipeMaterial,
+	}
+
+	ret_entity_data := &entity.Recipe{
 		Id:      1,
 		Title:   "テストタイトル",
 		Content: "テスト作り方",
-		Image:   "tedt.png",
+		Image:   "test.png", // ✅ モックの期待値と一致
+		RecipeMaterials: []entity.RecipeMaterial{
+			{
+				Id:       1,
+				RecipeId: 1,
+				Name:     "材料",
+			},
+		},
 	}
 
-	ret_material_data := &entity.RecipeMaterial{
-		Id:       1,
-		RecipeId: 1,
-		Name:     "材料",
-	}
-
-	// mockの作成
+	// ★ モック作成
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
 	mockRecipeRepo := repositories.NewMockRecipeRepository(mockCtrl)
-	mockRecipeRepo.EXPECT().Create(gomock.Any(), create_data).Return(
-		ret_data, nil,
-	)
+	mockRecipeSearvice := service.NewMockRecipeService(mockCtrl)
 
-	mockRecipeMateRepo := repositories.NewMockRecipeMaterialRepository(mockCtrl)
-	mockRecipeMateRepo.EXPECT().Create(gomock.Any(), create_material_data).Return(
-		ret_material_data, nil,
-	)
+	// ★ DTO → Entity の変換
+	entityData := create_data.ToEntity()
 
-	//var expect *entity.Recipe = ret_data
-	/*
-	   	usecase := &UserUsecase{
-	   		repository: mock,
-	   	}
+	// ★ モックの期待する呼び出しを定義
+	mockRecipeSearvice.EXPECT().
+		CreateRecipeTx(gomock.Any(), gomock.Eq(entityData)).
+		Return(ret_entity_data, nil).
+		MinTimes(1)
 
-	   // 結果チェック
-	   result, err := usecase.repository.Create(user)
+	mockUsecase := NewRecipeUsecase(mockRecipeRepo, mockRecipeSearvice)
 
-	   	if err != nil {
-	   		t.Error("error happen")
-	   	}
+	// ★ テスト実行
+	result, err := mockUsecase.AddRecipe(context.Background(), create_data)
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
 
-	   	if diff := cmp.Diff(result, expect); diff != "" {
-	   		t.Errorf("User Data miss match :%s", diff)
-	   	}
-	*/
+	if !reflect.DeepEqual(result.Title, create_data.Title) {
+		t.Errorf("保存結果が期待値と異なる\n期待:%+v\n実際:%+v", create_data, result)
+	}
 }
