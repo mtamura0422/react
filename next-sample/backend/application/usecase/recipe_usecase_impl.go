@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/react/next-sample/backend/domain/entity"
 	"github.com/react/next-sample/backend/domain/repositories"
@@ -64,18 +63,17 @@ func (u *RecipeUsecaseImpl) GetRecipeList(
 	ctx context.Context,
 	page int64,
 ) ([]*dto.Recipe, int, error) {
-	log.Printf("GetRecipeList tuuka0")
+
 	entities, total_count, err := u.recipeRepository.List(ctx, page)
 	if err != nil {
 		return nil, 0, err
 	}
-	log.Printf("GetRecipeList tuuka1")
+
 	dtoRecipes := make([]*dto.Recipe, len(entities))
 	for i, recipeEntity := range entities {
-		log.Printf("GetRecipeList tuuka2")
 		dtoRecipes[i] = dto.ToRecipeMapper(recipeEntity)
 	}
-	log.Printf("GetRecipeList tuuka3")
+
 	return dtoRecipes, total_count, nil
 }
 
@@ -84,17 +82,15 @@ func (u *RecipeUsecaseImpl) SearchRecipeList(
 	word string,
 	page int64,
 ) ([]*dto.Recipe, int, error) {
-	log.Printf("GetRecipeList tuuka0")
 	entities, total_count, err := u.recipeRepository.Search(ctx, word, page)
 	if err != nil {
 		return nil, 0, err
 	}
-	log.Printf("GetRecipeList tuuka1")
+
 	dtoRecipes := make([]*dto.Recipe, len(entities))
 	for i, recipeEntity := range entities {
-		log.Printf("GetRecipeList tuuka2")
 		dtoRecipes[i] = dto.ToRecipeMapper(recipeEntity)
 	}
-	log.Printf("GetRecipeList tuuka3")
+
 	return dtoRecipes, total_count, nil
 }
