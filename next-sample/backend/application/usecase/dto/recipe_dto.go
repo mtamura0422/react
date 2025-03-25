@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"log"
 	"mime/multipart"
 	"time"
 
@@ -71,7 +70,6 @@ func ToRecipeMapper(e *entity.Recipe) *Recipe {
 		filename += IMAGE_DEFAULT_FILW
 	}
 
-	log.Printf("filename = %s", filename)
 	return &Recipe{
 		Id:              e.Id,
 		Title:           e.Title,
