@@ -3,6 +3,7 @@ module github.com/react/next-sample/backend
 go 1.24rc2
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/getkin/kin-openapi v0.129.0
 	github.com/go-chi/chi v1.5.5
 	github.com/go-chi/chi/v5 v5.2.0

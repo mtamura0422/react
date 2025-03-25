@@ -7,13 +7,13 @@ import (
 )
 
 func TestNewDB(t *testing.T) {
-	_, err := NewDBMock()
+	_, err := NewTestDB()
 	assert.NoError(t, err)
 
 }
 
 func TestCloseDB(t *testing.T) {
-	_, err := NewDBMock()
+	_, err := NewTestDB()
 	assert.NoError(t, err)
 
 	err = CloseDB()

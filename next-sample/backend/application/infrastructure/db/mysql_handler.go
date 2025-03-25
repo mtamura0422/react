@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/go-sql-driver/mysql"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/mysqldialect"
@@ -63,7 +64,15 @@ func NewDB() *bun.DB {
 	return db
 }
 
-func NewDBMock() (*bun.DB, error) {
+func NewMockDB() (*sql.DB, sqlmock.Sqlmock, error) {
+	sqlDB, mock, err := sqlmock.New()
+	if err != nil {
+		return nil, nil, err
+	}
+	return sqlDB, mock, nil
+}
+
+func NewTestDB() (*bun.DB, error) {
 
 	jst, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {

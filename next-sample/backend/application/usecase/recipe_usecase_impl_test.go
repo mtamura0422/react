@@ -34,7 +34,7 @@ func TestAddRecipe(t *testing.T) {
 		Id:      1,
 		Title:   "テストタイトル",
 		Content: "テスト作り方",
-		Image:   "test.png", // モックの期待値と一致
+		Image:   "test.png",
 		RecipeMaterials: []entity.RecipeMaterial{
 			{
 				Id:       1,

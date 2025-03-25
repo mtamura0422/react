@@ -43,7 +43,7 @@ func (r *RecipeRepositoryImpl) Create(ctx context.Context, eRecipe *entity.Recip
 	lastInsertID, err := ret.LastInsertId()
 
 	recipe.Id = lastInsertID
-	log.Printf("recipe Create tuuka1")
+
 	return recipe.ToEntity(), nil
 
 }
@@ -78,7 +78,7 @@ func (u *RecipeRepositoryImpl) List(ctx context.Context, page int64) ([]*entity.
 	for i, recipeRecord := range dbRecipes {
 		recipeEntityes[i] = recipeRecord.ToEntity()
 	}
-
+	log.Printf("aaaaaa%+v", &recipeEntityes)
 	return recipeEntityes, count, nil
 }
 

@@ -65,7 +65,7 @@ func TestCreateRecipe(t *testing.T) {
 		Times(1) // 1回だけ呼び出し
 
 	// ★ モックDBとTxRepositoryを生成
-	bunDB, err := db.NewDBMock()
+	bunDB, err := db.NewTestDB()
 	assert.NoError(t, err)
 
 	txRepository := db.NewTxRepository(bunDB)
