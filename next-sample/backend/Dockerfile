@@ -18,7 +18,7 @@ RUN go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
 RUN go install  github.com/amacneil/dbmate@latest 
 RUN go install  github.com/google/wire/cmd/wire@latest 
 RUN go install  go.uber.org/mock/mockgen@latest
-
+RUN go install golang.org/x/tools/cmd/godoc@latest
 
 RUN apk add make
 

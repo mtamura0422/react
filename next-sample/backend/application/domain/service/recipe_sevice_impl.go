@@ -1,10 +1,10 @@
+// recipe_sevice_impl.go
 package service
 
 import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -17,12 +17,14 @@ import (
 
 var _ port.RecipeService = (*RecipeServiceImpl)(nil)
 
+// RecipeService interface
 type RecipeServiceImpl struct {
 	txRepo *db.TxRepository
 	rRepo  repositories.RecipeRepository
 	rmRepo repositories.RecipeMaterialRepository
 }
 
+// NewRecipeService create new service
 func NewRecipeService(
 	txRepo *db.TxRepository,
 	rRepo repositories.RecipeRepository,
@@ -31,6 +33,9 @@ func NewRecipeService(
 	return &RecipeServiceImpl{txRepo: txRepo, rRepo: rRepo, rmRepo: rmRepo}
 }
 
+/*
+createRecipe レシピ登録
+*/
 func (s *RecipeServiceImpl) createRecipe(input *entity.Recipe) func(ctx context.Context) (interface{}, error) {
 
 	return func(ctx context.Context) (interface{}, error) {
@@ -45,9 +50,8 @@ func (s *RecipeServiceImpl) createRecipe(input *entity.Recipe) func(ctx context.
 		if err != nil {
 			return nil, err
 		}
-		log.Printf("createRecipe tuuka2")
+
 		for _, recipeMaterial := range input.RecipeMaterials {
-			log.Printf("createRecipe tuuka3")
 			recipeMaterial.RecipeId = eRecipe.Id
 			_, err := s.rmRepo.Create(ctx, &recipeMaterial)
 			if err != nil {
@@ -60,6 +64,9 @@ func (s *RecipeServiceImpl) createRecipe(input *entity.Recipe) func(ctx context.
 	}
 }
 
+/*
+CreateRecipeTx レシピ登録(トランザクション処理)
+*/
 func (s *RecipeServiceImpl) CreateRecipeTx(ctx context.Context, input *entity.Recipe) (interface{}, error) {
 
 	v, err := s.txRepo.RunInTx(ctx, s.createRecipe(input))
@@ -70,6 +77,9 @@ func (s *RecipeServiceImpl) CreateRecipeTx(ctx context.Context, input *entity.Re
 	return v, nil
 }
 
+/*
+uploadImg 画廊アップロード
+*/
 func uploadImg(input *entity.Recipe) (string, error) {
 
 	if input.RecipeImage.File == nil {

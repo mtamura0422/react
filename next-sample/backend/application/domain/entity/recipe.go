@@ -1,3 +1,4 @@
+// recipe.go
 package entity
 
 import (
@@ -5,6 +6,7 @@ import (
 	"time"
 )
 
+// Recipe レシピentityモデル
 type Recipe struct {
 	Id        int64
 	Title     string
@@ -17,6 +19,7 @@ type Recipe struct {
 	RecipeImage     RecipeImage
 }
 
+// RecipeImage レシピ画像entityモデル
 type RecipeImage struct {
 	File       multipart.File
 	FileHeader *multipart.FileHeader

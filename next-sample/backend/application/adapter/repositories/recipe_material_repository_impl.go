@@ -1,3 +1,4 @@
+// recipe_material_repository_impl.go
 package repositories
 
 import (
@@ -12,10 +13,14 @@ import (
 
 var _ repositories.RecipeMaterialRepository = (*RecipeMaterialRepositoryImpl)(nil)
 
+// RecipeMaterialRepository Interface
 type RecipeMaterialRepositoryImpl struct {
 	db *bun.DB
 }
 
+/*
+Create　材料登録
+*/
 func (r *RecipeMaterialRepositoryImpl) Create(ctx context.Context, eRecipeMaterial *entity.RecipeMaterial) (*entity.RecipeMaterial, error) {
 
 	var inserter *bun.InsertQuery
@@ -40,6 +45,9 @@ func (r *RecipeMaterialRepositoryImpl) Create(ctx context.Context, eRecipeMateri
 
 }
 
+/*
+Get　材料取得
+*/
 func (u *RecipeMaterialRepositoryImpl) Get(ctx context.Context, id int64) (*entity.RecipeMaterial, error) {
 	var recipeMaterial model.RecipeMaterial
 	if err := u.db.NewSelect().Model(&recipeMaterial).Where("id = ?", id).Scan(ctx); err != nil {
@@ -48,6 +56,7 @@ func (u *RecipeMaterialRepositoryImpl) Get(ctx context.Context, id int64) (*enti
 	return recipeMaterial.ToEntity(), nil
 }
 
+// NewRecipeMaterialRepository create new repositories
 func NewRecipeMaterialRepository(db *bun.DB) repositories.RecipeMaterialRepository {
 	return &RecipeMaterialRepositoryImpl{db: db}
 }

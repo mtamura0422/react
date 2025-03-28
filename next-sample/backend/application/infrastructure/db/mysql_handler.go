@@ -1,3 +1,4 @@
+// mysql_handler.go
 package db
 
 import (
@@ -14,9 +15,15 @@ import (
 	"github.com/uptrace/bun/extra/bundebug"
 )
 
+// dbインスタンス
 var DB *sql.DB
+
+// bunインスタンス
 var BunDB *bun.DB
 
+/*
+NewDB DBインスタンス生成
+*/
 func NewDB() *bun.DB {
 
 	jst, err := time.LoadLocation("Asia/Tokyo")
@@ -64,6 +71,9 @@ func NewDB() *bun.DB {
 	return db
 }
 
+/*
+NewMockDB MockDBインスタンス生成
+*/
 func NewMockDB() (*sql.DB, sqlmock.Sqlmock, error) {
 	sqlDB, mock, err := sqlmock.New()
 	if err != nil {
@@ -119,6 +129,9 @@ func NewTestDB() (*bun.DB, error) {
 	return db, nil
 }
 
+/*
+CloseDB DBクローズ処理
+*/
 func CloseDB() error {
 	err := DB.Close()
 

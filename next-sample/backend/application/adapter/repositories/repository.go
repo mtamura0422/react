@@ -1,3 +1,4 @@
+// repository.go
 package repositories
 
 import (
@@ -6,6 +7,9 @@ import (
 	pkgErr "github.com/react/next-sample/backend/pkg/error"
 )
 
+/*
+RepositoryError repositories用エラーオブジェクト生成
+*/
 func RepositoryError(err error) error {
 	switch err {
 	case sql.ErrNoRows:

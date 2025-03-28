@@ -1,3 +1,4 @@
+// transaction.go
 package db
 
 import (
@@ -16,8 +17,10 @@ var _ transaction.Transaction = (*TxRepository)(nil)
 
 type txKey struct{}
 
+// トランザクション保存用のcontextのkey
 var TxCtxKey = txKey{}
 
+// TxRepository Interface
 type TxRepository struct {
 	db *bun.DB
 }
@@ -31,6 +34,9 @@ func NewTxRepository(db *bun.DB) *TxRepository {
 	return &TxRepository{db: db}
 }
 
+/*
+RunInTx トランザクション処理実行
+*/
 func (r *TxRepository) RunInTx(ctx context.Context, fn func(ctx context.Context) (interface{}, error)) (interface{}, error) {
 	log.Printf("listen: RegisterRecipe7")
 	log.Printf("listen: tuuka")
@@ -60,12 +66,17 @@ func (r *TxRepository) RunInTx(ctx context.Context, fn func(ctx context.Context)
 	return v, TransactionError(tx.Commit())
 }
 
-// context.Contextからトランザクションを取得する関数も忘れずに！
+/*
+GetTx context.Contextからトランザクションを取得
+*/
 func GetTx(ctx context.Context) (*bun.Tx, bool) {
 	tx, ok := ctx.Value(TxCtxKey).(*bun.Tx)
 	return tx, ok
 }
 
+/*
+TransactionError エラーオブジェクト生成
+*/
 func TransactionError(err error) error {
 	switch err {
 	case nil:

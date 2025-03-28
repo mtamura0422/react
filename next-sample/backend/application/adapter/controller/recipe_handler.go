@@ -1,3 +1,5 @@
+// cotroller package
+// recipe_handler.go
 package controller
 
 import (
@@ -8,11 +10,17 @@ import (
 	"github.com/react/next-sample/backend/infrastructure/openapi"
 )
 
+/*
+GetVersion　バージョン取得
+*/
 func (s *Server) GetVersion(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "GetVersion")
 	log.Printf("listen: GetVersion")
 }
 
+/*
+GetRecipeSearch　レシピ検索
+*/
 func (s *Server) GetRecipeSearch(w http.ResponseWriter, r *http.Request, params openapi.GetRecipeSearchParams) {
 	recipes, total_count, err := s.recipeUsecase.SearchRecipeList(r.Context(), params.Q, int64(*params.Page))
 	if err != nil {
@@ -35,6 +43,9 @@ func (s *Server) GetRecipeSearch(w http.ResponseWriter, r *http.Request, params 
 	s.HandleOK(w, recipeList)
 }
 
+/*
+レシピ登録
+*/
 func (s *Server) RegisterRecipe(w http.ResponseWriter, r *http.Request) {
 
 	dtoRecipe, e := ReqToDTO(r)
@@ -54,6 +65,9 @@ func (s *Server) RegisterRecipe(w http.ResponseWriter, r *http.Request) {
 
 }
 
+/*
+GetRecipe　レシピ詳細
+*/
 func (s *Server) GetRecipe(w http.ResponseWriter, r *http.Request, recipeId int64) {
 
 	recipe, err := s.recipeUsecase.FindRecipe(r.Context(), recipeId)

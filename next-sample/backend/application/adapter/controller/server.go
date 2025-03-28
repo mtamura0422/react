@@ -1,3 +1,4 @@
+// sercer.go
 package controller
 
 import (
@@ -12,14 +13,15 @@ import (
 	"github.com/uptrace/bun"
 )
 
-// ServerInterfaceを実装
+// Server Interface
 type Server struct {
-	db                    *bun.DB
-	recipeUsecase         port.RecipeUsecase
-	recipeMaterialUsecase port.RecipeMaterialUsecase
-	recipeService         sPort.RecipeService
+	db                    *bun.DB                    // bunインスタンス
+	recipeUsecase         port.RecipeUsecase         // recipe usecaseのインターフェース
+	recipeMaterialUsecase port.RecipeMaterialUsecase // recipeMaterial usecaseのインターフェース
+	recipeService         sPort.RecipeService        // recipe serviceインターフェース
 }
 
+// NewServer create new controller
 func NewServer(
 	db *bun.DB,
 	recipeUsecase port.RecipeUsecase,
@@ -55,6 +57,9 @@ func NewServer() *Server {
 }
 */
 
+/*
+HandleOK　ハンドルOK
+*/
 func (s *Server) HandleOK(w http.ResponseWriter, obj interface{}) {
 	s.setResponseHeaders(w)
 	w.WriteHeader(http.StatusOK)
@@ -63,6 +68,9 @@ func (s *Server) HandleOK(w http.ResponseWriter, obj interface{}) {
 	log.Printf("%v", obj)
 }
 
+/*
+handleError　ハンドルエラー
+*/
 func (s *Server) handleError(w http.ResponseWriter, r *http.Request, err error) {
 	s.setResponseHeaders(w)
 	//	w.WriteHeader(http.StatusInternalServerError)
@@ -87,6 +95,9 @@ func (s *Server) handleError(w http.ResponseWriter, r *http.Request, err error) 
 
 }
 
+/*
+setResponseHeaders　レスポンスヘッダをセット
+*/
 func (s *Server) setResponseHeaders(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 }

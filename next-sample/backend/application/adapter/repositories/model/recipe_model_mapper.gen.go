@@ -4,7 +4,7 @@ package model
 
 import "github.com/react/next-sample/backend/domain/entity"
 
-// ORM モデルを Entity に変換
+// ToEntity ORMモデルをEntityに変換
 func (dbRecipe *Recipe) ToEntity() *entity.Recipe {
 
 	entityRecipeMaterial := make([]entity.RecipeMaterial, len(dbRecipe.RecipeMaterials))
@@ -22,6 +22,7 @@ func (dbRecipe *Recipe) ToEntity() *entity.Recipe {
 	}
 }
 
+// ToRecipeMapper EntityをORMモデルに変換
 func ToRecipeMapper(entity *entity.Recipe) *Recipe {
 	return &Recipe{
 		Id:        entity.Id,

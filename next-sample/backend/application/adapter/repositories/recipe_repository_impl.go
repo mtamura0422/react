@@ -1,3 +1,4 @@
+// recipe_repository_impl.go
 package repositories
 
 import (
@@ -13,12 +14,17 @@ import (
 
 var _ repositories.RecipeRepository = (*RecipeRepositoryImpl)(nil)
 
+// RecipeRepository Interface
 type RecipeRepositoryImpl struct {
 	db *bun.DB
 }
 
+// リストデータ取得件数
 const LIMIT = 10
 
+/*
+Create　レシピ登録
+*/
 func (r *RecipeRepositoryImpl) Create(ctx context.Context, eRecipe *entity.Recipe) (*entity.Recipe, error) {
 
 	var inserter *bun.InsertQuery
@@ -48,6 +54,9 @@ func (r *RecipeRepositoryImpl) Create(ctx context.Context, eRecipe *entity.Recip
 
 }
 
+/*
+Get　レシピ取得
+*/
 func (u *RecipeRepositoryImpl) Get(ctx context.Context, id int64) (*entity.Recipe, error) {
 
 	var recipe model.Recipe
@@ -57,6 +66,9 @@ func (u *RecipeRepositoryImpl) Get(ctx context.Context, id int64) (*entity.Recip
 	return recipe.ToEntity(), nil
 }
 
+/*
+List　レシピ一覧取得
+*/
 func (u *RecipeRepositoryImpl) List(ctx context.Context, page int64) ([]*entity.Recipe, int, error) {
 
 	var dbRecipes []model.Recipe
@@ -78,10 +90,13 @@ func (u *RecipeRepositoryImpl) List(ctx context.Context, page int64) ([]*entity.
 	for i, recipeRecord := range dbRecipes {
 		recipeEntityes[i] = recipeRecord.ToEntity()
 	}
-	log.Printf("aaaaaa%+v", &recipeEntityes)
+	log.Printf("aaaaaa%+v", recipeEntityes)
 	return recipeEntityes, count, nil
 }
 
+/*
+Search　レシピ検索
+*/
 func (u *RecipeRepositoryImpl) Search(ctx context.Context, word string, page int64) ([]*entity.Recipe, int, error) {
 
 	var dbRecipes []model.Recipe
@@ -108,6 +123,7 @@ func (u *RecipeRepositoryImpl) Search(ctx context.Context, word string, page int
 	return recipeEntityes, count, nil
 }
 
+// NewRecipeRepository create new repositories
 func NewRecipeRepository(db *bun.DB) repositories.RecipeRepository {
 	return &RecipeRepositoryImpl{db: db}
 }

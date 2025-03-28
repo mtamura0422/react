@@ -1,3 +1,4 @@
+// recipe_usecase_impl.go
 package usecase
 
 import (
@@ -13,11 +14,13 @@ import (
 
 var _ port.RecipeUsecase = (*RecipeUsecaseImpl)(nil)
 
+// RecipeUsecaseImpl interface
 type RecipeUsecaseImpl struct {
 	recipeRepository repositories.RecipeRepository
 	recipeService    sPort.RecipeService
 }
 
+// NewRecipeUsecase create new usecase
 func NewRecipeUsecase(
 	recipeRepository repositories.RecipeRepository,
 	recipeService sPort.RecipeService,
@@ -28,6 +31,9 @@ func NewRecipeUsecase(
 	}
 }
 
+/*
+AddRecipe　レシピ登録 service呼び出し
+*/
 func (u *RecipeUsecaseImpl) AddRecipe(
 	ctx context.Context,
 	recipe *dto.Recipe,
@@ -48,6 +54,9 @@ func (u *RecipeUsecaseImpl) AddRecipe(
 	return dto.ToRecipeMapper(res), nil
 }
 
+/*
+FindRecipe
+*/
 func (u *RecipeUsecaseImpl) FindRecipe(
 	ctx context.Context,
 	id int64,
@@ -59,6 +68,9 @@ func (u *RecipeUsecaseImpl) FindRecipe(
 	return dto.ToRecipeMapper(entity), nil
 }
 
+/*
+GetRecipeList　レシピ一覧取得
+*/
 func (u *RecipeUsecaseImpl) GetRecipeList(
 	ctx context.Context,
 	page int64,
@@ -77,6 +89,9 @@ func (u *RecipeUsecaseImpl) GetRecipeList(
 	return dtoRecipes, total_count, nil
 }
 
+/*
+SearchRecipeList レシピ検索
+*/
 func (u *RecipeUsecaseImpl) SearchRecipeList(
 	ctx context.Context,
 	word string,

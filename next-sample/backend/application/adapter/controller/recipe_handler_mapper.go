@@ -1,3 +1,4 @@
+// recipe_handler_mapper.go
 package controller
 
 import (
@@ -11,6 +12,9 @@ import (
 	"github.com/react/next-sample/backend/usecase/dto"
 )
 
+/*
+ReqToDTO　リクエストパラメータをDTOに変換
+*/
 func ReqToDTO(r *http.Request) (*dto.Recipe, error) {
 
 	err := r.ParseMultipartForm(32 << 20) // 32MB
@@ -81,6 +85,9 @@ func ReqToDTO(r *http.Request) (*dto.Recipe, error) {
 	}, nil
 }
 
+/*
+ToDTO　リクエストオブジェクト(openapiの構造体)をDTOに変換
+*/
 func ToDTO(req *openapi.Recipe) *dto.Recipe {
 
 	recipeMaterials := make([]dto.RecipeMaterial, len(req.Materials))
@@ -101,6 +108,9 @@ func ToDTO(req *openapi.Recipe) *dto.Recipe {
 	}
 }
 
+/*
+ToResponse　DTOオブジェクトをopenapiの構造体に変換
+*/
 func ToResponse(u *dto.Recipe) *openapi.Recipe {
 
 	materials := make([]string, len(u.RecipeMaterials))

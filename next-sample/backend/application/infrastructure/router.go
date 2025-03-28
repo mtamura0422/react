@@ -23,6 +23,9 @@ import (
 	"github.com/react/next-sample/backend/infrastructure/openapi"
 )
 
+/*
+InitRouter 初期化処理
+*/
 func InitRouter() {
 
 	openapi3filter.RegisterBodyDecoder("multipart/form-data", openapi3filter.FileBodyDecoder)
@@ -60,7 +63,7 @@ func InitRouter() {
 
 	router.Use(middlewareStaticImages)
 
-	router.Use(middlewareFormdataValidator)
+	//	router.Use(middlewareFormdataValidator)
 
 	router.Use(middleware.Heartbeat("/healthz"))
 	router.Use(middleware.AllowContentType("application/json", "multipart/form-data"))
@@ -78,7 +81,7 @@ func InitRouter() {
 
 }
 
-// 画像配信用
+// 画像配信用moddleware
 var middlewareFormdataValidator = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// `multipart/form-data` の場合は `OapiRequestValidator` の前にリクエストを解析する
@@ -93,6 +96,7 @@ var middlewareFormdataValidator = func(next http.Handler) http.Handler {
 	})
 }
 
+// 画像配信用moddleware
 var middlewareStaticImages = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		/*
@@ -115,6 +119,15 @@ var middlewareStaticImages = func(next http.Handler) http.Handler {
 	})
 }
 
+/*
+oapiRequestValidatorWithExclusion
+
+`multipart/form-data` の場合は `OapiRequestValidator` の前にリクエストを解析する
+
+それ以外は
+
+OapiRequestValidatorを実行する
+*/
 func oapiRequestValidatorWithExclusion(swagger *openapi3.T) func(http.Handler) http.Handler {
 
 	return func(next http.Handler) http.Handler {

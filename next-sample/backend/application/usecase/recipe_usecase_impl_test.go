@@ -1,3 +1,4 @@
+// recipe_usecase_impl_test.go
 package usecase
 
 import (
@@ -14,6 +15,9 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
+/*
+TestAddRecipe レシピ登録テスト
+*/
 func TestAddRecipe(t *testing.T) {
 	// ★ モックデータの準備
 	create_material_data := &dto.RecipeMaterial{
@@ -72,6 +76,9 @@ func TestAddRecipe(t *testing.T) {
 	}
 }
 
+/*
+TestFindRecipe レシピ検索テスト
+*/
 func TestFindRecipe(t *testing.T) {
 
 	// ★ モックデータの準備
@@ -116,6 +123,9 @@ func TestFindRecipe(t *testing.T) {
 	}
 }
 
+/*
+TestGetRecipeList レシピ一覧取得テスト
+*/
 func TestGetRecipeList(t *testing.T) {
 
 	entityData := []*entity.Recipe{
@@ -184,6 +194,10 @@ func TestGetRecipeList(t *testing.T) {
 		}
 	}
 }
+
+/*
+TestSearchRecipeList レシピ検索テスト
+*/
 func TestSearchRecipeList(t *testing.T) {
 
 	entityData := []*entity.Recipe{

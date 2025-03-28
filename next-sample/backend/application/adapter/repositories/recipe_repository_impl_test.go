@@ -1,8 +1,8 @@
+// recipe_repository_impl_test.go
 package repositories
 
 import (
 	"context"
-	"log"
 	"regexp"
 	"testing"
 	"time"
@@ -16,6 +16,9 @@ import (
 	"github.com/uptrace/bun/dialect/mysqldialect"
 )
 
+/*
+TestCreate レシピ登録テスト
+*/
 func TestCreate(t *testing.T) {
 
 	entity_data := &entity.Recipe{
@@ -56,6 +59,9 @@ func TestCreate(t *testing.T) {
 	}
 }
 
+/*
+TestGet レシシ取得テスト
+*/
 func TestGet(t *testing.T) {
 
 	t.Run("正常系 データあり", func(t *testing.T) {
@@ -145,6 +151,9 @@ func TestGet(t *testing.T) {
 
 }
 
+/*
+TestList レシピ一覧取得テスト
+*/
 func TestList(t *testing.T) {
 
 	t.Run("正常系 データあり", func(t *testing.T) {
@@ -267,6 +276,9 @@ func TestList(t *testing.T) {
 	})
 }
 
+/*
+TestSearch　レシピ検索テスト
+*/
 func TestSearch(t *testing.T) {
 
 	t.Run("正常系 データあり", func(t *testing.T) {
@@ -380,7 +392,7 @@ func TestSearch(t *testing.T) {
 
 		rep := NewRecipeRepository(bun.NewDB(dbMock, mysqldialect.New()))
 		ret, ret_num, err := rep.Search(context.Background(), "テスト", 1)
-		log.Printf("aaaaa%v", ret)
+
 		assert.Error(t, err)
 		assert.Nil(t, ret)
 

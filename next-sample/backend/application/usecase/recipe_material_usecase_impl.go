@@ -1,8 +1,8 @@
+// recipe_material_usecase_impl.go
 package usecase
 
 import (
 	"context"
-	"log"
 
 	"github.com/react/next-sample/backend/domain/repositories"
 	"github.com/react/next-sample/backend/usecase/dto"
@@ -11,23 +11,26 @@ import (
 
 var _ port.RecipeMaterialUsecase = (*RecipeMaterialUsecaseImpl)(nil)
 
+// RecipeMaterialUsecaseImpl interface
 type RecipeMaterialUsecaseImpl struct {
 	recipeMaterialRepository repositories.RecipeMaterialRepository
 }
 
+/*
+FindRecipeMaterial 材料検索
+*/
 func (u *RecipeMaterialUsecaseImpl) FindRecipeMaterial(
 	ctx context.Context,
 	id int64,
 ) (*dto.RecipeMaterial, error) {
-	log.Printf("tuuka material2")
 	entity, err := u.recipeMaterialRepository.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("tuuka material3")
 	return dto.ToRecipeMaterialMapper(entity), nil
 }
 
+// NewRecipeMaterialUsecase create new usecase
 func NewRecipeMaterialUsecase(
 	recipeMaterialRepository repositories.RecipeMaterialRepository,
 ) port.RecipeMaterialUsecase {
